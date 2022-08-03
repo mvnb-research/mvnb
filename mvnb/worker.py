@@ -111,8 +111,8 @@ class Worker(object):
 
     def _write_data(self, data):
         while data:
-            if _select(self._fd):
-                data = _write(self._fd, data)
+            if fd := _select_write(self._fd):
+                data = _write(fd, data)
 
 
 @contextmanager
@@ -147,12 +147,14 @@ def _connect(addr):
 
 async def _recv_fd(sock):
     s = await _accept(sock)
+    s = _select_read(s)
     f = recvfds(s, 1)[0]
     return f
 
 
 async def _recv_pid(sock):
     s = await _accept(sock)
+    s = _select_read(s)
     return int(s.recv(8))
 
 
@@ -161,8 +163,12 @@ async def _accept(sock):
     return s
 
 
-def _select(fd):
-    return select((), (fd,), ())[1]
+def _select_read(fd):
+    return select((fd,), (), ())[0][0]
+
+
+def _select_write(fd):
+    return select((), (fd,), ())[1][0]
 
 
 def _write(fd, data):
