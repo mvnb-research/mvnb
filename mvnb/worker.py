@@ -69,12 +69,13 @@ class Worker(object):
             await self._handle_request(msg, *args)
 
     async def _read_callback_async(self, data):
-        if self._config.prompt.match(data):
-            self._writable.set()
-        else:
-            txt = data.decode()
-            res = Stdout(cell=self._name, text=txt)
-            await self._response(res)
+        for line in data.splitlines(True):
+            if self._config.prompt.match(line):
+                self._writable.set()
+            else:
+                txt = line.decode()
+                res = Stdout(cell=self._name, text=txt)
+                await self._response(res)
 
     @singledispatchmethod
     async def _handle_request(self, _):
