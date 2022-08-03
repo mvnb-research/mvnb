@@ -38,7 +38,7 @@ class Config(Record, prog=_package, group=object()):
 
     @option(help="prompt pattern", metavar="<regex>")
     def prompt(self, raw):
-        pat = raw or r"^((>>> )|(... ))$"
+        pat = raw or r"^((>>> )|(\.\.\. ))$"
         return compile(pat.encode())
 
     @option(help="command prefix pattern", metavar="<regex>")
