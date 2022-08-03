@@ -148,7 +148,6 @@ def _connect(addr):
 async def _recv_fd(sock):
     s = await _accept(sock)
     f = recvfds(s, 1)[0]
-    setraw(f, TCSANOW)
     return f
 
 
