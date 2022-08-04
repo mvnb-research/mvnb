@@ -4,7 +4,7 @@ from shlex import split
 from sys import stdin
 
 from mvnb.client import Client
-from mvnb.command import Command, Create, Goto, Run, Update
+from mvnb.command import Command, Create, Exit, Goto, Run, Update
 from mvnb.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
 from mvnb.reader import Reader
 
@@ -88,6 +88,10 @@ class _Console(object):
         msg = RunCell(cell=self.cell)
         await self.client.send(msg)
 
+    @handle_command.register(Exit)
+    async def _(self, _):
+        raise _Exit()
+
     @singledispatchmethod
     async def handle_output(self, _):
         pass
@@ -101,6 +105,10 @@ class _Error(Exception):
     pass
 
 
+class _Exit(Exception):
+    pass
+
+
 def _repl(func):
     while True:
         try:
@@ -108,6 +116,8 @@ def _repl(func):
         except _Error as e:
             if s := str(e):
                 print(s)
+        except _Exit:
+            break
         except KeyboardInterrupt:
             stdin.isatty() and print()
         except EOFError:

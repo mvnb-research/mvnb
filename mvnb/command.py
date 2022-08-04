@@ -28,3 +28,7 @@ class Update(Command):
 
 class Run(Command):
     pass
+
+
+class Exit(Command):
+    pass
