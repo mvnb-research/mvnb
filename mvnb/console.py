@@ -1,12 +1,13 @@
 from asyncio import new_event_loop
 from functools import singledispatchmethod
 from shlex import split
-from sys import stdin
+
+from prompt_toolkit import PromptSession
+from prompt_toolkit.history import FileHistory
 
 from mvnb.client import Client
 from mvnb.command import Command, Create, Goto, Run, Update
 from mvnb.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
-from mvnb.reader import Reader
 
 
 def start(config):
@@ -19,7 +20,8 @@ def start(config):
 class _Console(object):
     def __init__(self, config):
         self.config = config
-        self.reader = Reader(config)
+        self.command_reader = _prompt_session(self.config.command_history)
+        self.code_reader = _prompt_session(self.config.code_history)
         self.client = Client(config, self.handle_output)
         self.cell = None
         self.code = None
@@ -41,7 +43,7 @@ class _Console(object):
                 raise _Error(f"unknown command: {toks[0]}")
 
     def read_command(self):
-        txt = self.reader.command_input(f"{self.cell or ''}> ")
+        txt = self.command_reader.prompt(f"{self.cell or ''}> ", in_thread=True)
         txt = self.config.command_prefix.sub("", txt)
         txt = self.config.command_suffix.sub("", txt)
         return txt
@@ -52,7 +54,7 @@ class _Console(object):
         _repl(self.read_code_line)
 
     def read_code_line(self):
-        i = self.reader.code_input(f"{self.cell}:{self.line}> ")
+        i = self.code_reader.prompt(f"{self.cell}:{self.line}> ", in_thread=True)
         if self.config.code_end.match(i):
             raise EOFError()
         self.code += f"{i}\n"
@@ -101,6 +103,10 @@ class _Error(Exception):
     pass
 
 
+def _prompt_session(history):
+    return PromptSession(history=FileHistory(history))
+
+
 def _repl(func):
     while True:
         try:
@@ -109,7 +115,6 @@ def _repl(func):
             if s := str(e):
                 print(s)
         except KeyboardInterrupt:
-            stdin.isatty() and print()
+            pass
         except EOFError:
-            stdin.isatty() and print()
             break
