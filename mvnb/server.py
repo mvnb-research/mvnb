@@ -16,7 +16,7 @@ from bidict import bidict
 from tornado.web import Application
 from tornado.websocket import WebSocketHandler
 
-from mvnb.message import CreateCell, ForkCell, Message, RunCell, UpdateCell
+from mvnb.data import CreateCell, Data, ForkCell, RunCell, UpdateCell
 from mvnb.worker import Worker
 
 
@@ -51,7 +51,7 @@ class _Server(object):
     async def watch_requests(self):
         while True:
             txt = await self.requests.get()
-            msg = Message.from_json(txt)
+            msg = Data.from_json(txt)
             await self.handle_request(msg)
 
     async def watch_responses(self):

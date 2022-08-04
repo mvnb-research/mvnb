@@ -3,19 +3,19 @@ from uuid import uuid4
 from mvnb.record import Record, field
 
 
-class Message(Record, abst=True, group=object()):
+class Data(Record, abst=True, group=object()):
     @field
     def id(self, raw):
         return raw or uuid4().hex
 
 
-class CreateCell(Message):
+class CreateCell(Data):
     @field
     def cell(self, raw):
         return raw or Exception()
 
 
-class ForkCell(Message):
+class ForkCell(Data):
     @field
     def cell(self, raw):
         return raw or Exception()
@@ -25,7 +25,7 @@ class ForkCell(Message):
         return raw or Exception()
 
 
-class UpdateCell(Message):
+class UpdateCell(Data):
     @field
     def cell(self, raw):
         return raw or Exception()
@@ -35,13 +35,13 @@ class UpdateCell(Message):
         return raw or Exception()
 
 
-class RunCell(Message):
+class RunCell(Data):
     @field
     def cell(self, raw):
         return raw or Exception()
 
 
-class Output(Message, abst=True):
+class Output(Data, abst=True):
     @field
     def cell(self, raw):
         return raw or Exception()
@@ -53,7 +53,7 @@ class Stdout(Output):
         return raw or Exception()
 
 
-class Response(Message, abst=True):
+class Response(Data, abst=True):
     @field
     def request(self, raw):
         return raw or Exception()
