@@ -1,6 +1,8 @@
 from asyncio import new_event_loop
 from functools import singledispatchmethod
+from os import isatty
 from shlex import split
+from sys import stdin
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
@@ -20,8 +22,9 @@ def start(config):
 class _Console(object):
     def __init__(self, config):
         self.config = config
-        self.command_reader = _prompt_session(self.config.command_history)
-        self.code_reader = _prompt_session(self.config.code_history)
+        self.isatty = stdin.isatty()
+        self.command_reader = None
+        self.code_reader = None
         self.client = Client(config, self.handle_output)
         self.cell = None
         self.code = None
@@ -43,7 +46,7 @@ class _Console(object):
                 raise _Error(f"unknown command: {toks[0]}")
 
     def read_command(self):
-        txt = self.command_reader.prompt(f"{self.cell or ''}> ", in_thread=True)
+        txt = self.input_command(f"{self.cell or ''}> ")
         txt = self.config.command_prefix.sub("", txt)
         txt = self.config.command_suffix.sub("", txt)
         return txt
@@ -54,11 +57,30 @@ class _Console(object):
         _repl(self.read_code_line)
 
     def read_code_line(self):
-        i = self.code_reader.prompt(f"{self.cell}:{self.line}> ", in_thread=True)
+        i = self.input_code(f"{self.cell}:{self.line}> ")
         if self.config.code_end.match(i):
             raise EOFError()
         self.code += f"{i}\n"
         self.line += 1
+
+    def input_command(self, prompt):
+        if self.isatty:
+            if self.command_reader is None:
+                self.command_reader = _prompt_session(self.config.command_history)
+            return self.command_reader.prompt(prompt, in_thread=True)
+        return self.input(prompt)
+
+    def input_code(self, prompt):
+        if self.isatty:
+            if self.code_reader is None:
+                self.code_reader = _prompt_session(self.config.code_history)
+            return self.code_reader.prompt(prompt, in_thread=True)
+        return self.input(prompt)
+
+    def input(self, prompt):
+        i = input(prompt)
+        print(i)
+        return i
 
     @singledispatchmethod
     async def handle_command(self, _):
