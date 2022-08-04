@@ -14,7 +14,6 @@ setup(
     ),
     install_requires=[
         "bidict>=0.22.0,<0.23.0",
-        "prompt-toolkit>=3.0.0,<3.1.0",
         "tornado>=6.2.0,<6.3.0",
     ],
 )
