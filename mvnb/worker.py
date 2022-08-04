@@ -10,26 +10,15 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from mvnb.data import (
-    DidCreateCell,
-    DidForkCell,
-    DidRunCell,
-    DidUpdateCell,
-    ForkCell,
-    RunCell,
-    Stdout,
-    UpdateCell,
-)
+from mvnb.data import DidCreateCell, DidForkCell, DidRunCell, ForkCell, RunCell, Stdout
 
 
 class Worker(object):
-    def __init__(self, name, config, response):
-        self._name = name
+    def __init__(self, config, response):
         self._config = config
         self._response = response
         self._fd = None
         self._pid = None
-        self._code = None
         self._requests = Queue()
         self._writable = Event()
 
@@ -39,7 +28,7 @@ class Worker(object):
             self._pid = _popen(cmd, fd2)
         await self._start()
         res = DidCreateCell(request=msg)
-        await self._response(res)
+        await self._response((res, self))
 
     async def start_fork(self, msg, addr, recv):
         with _connect(addr) as sock:
@@ -48,7 +37,7 @@ class Worker(object):
             self._pid = await _recv_pid(sock)
         await self._start()
         res = DidForkCell(request=msg)
-        await self._response(res)
+        await self._response((res, self))
 
     async def put(self, msg, *args):
         await self._requests.put((msg, *args))
@@ -74,8 +63,8 @@ class Worker(object):
                 self._writable.set()
             else:
                 txt = line.decode()
-                res = Stdout(cell=self._name, text=txt)
-                await self._response(res)
+                res = Stdout(text=txt)
+                await self._response((res, self))
 
     @singledispatchmethod
     async def _handle_request(self, _):
@@ -87,17 +76,11 @@ class Worker(object):
         code = code.replace("__addr__", addr)
         await self._write(code)
 
-    @_handle_request.register(UpdateCell)
-    async def _(self, msg):
-        self._code = msg.code
-        res = DidUpdateCell(request=msg)
-        await self._response(res)
-
     @_handle_request.register(RunCell)
-    async def _(self, msg):
-        await self._write(self._code)
+    async def _(self, msg, code):
+        await self._write(code)
         res = DidRunCell(request=msg)
-        await self._response(res)
+        await self._response((res, self))
 
     async def _write(self, text):
         for line in text.splitlines():

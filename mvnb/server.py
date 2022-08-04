@@ -12,11 +12,21 @@ from tempfile import gettempdir
 from threading import Thread
 from uuid import uuid4
 
-from bidict import bidict
 from tornado.web import Application
 from tornado.websocket import WebSocketHandler
 
-from mvnb.data import CreateCell, Data, ForkCell, RunCell, UpdateCell
+from mvnb.data import (
+    CreateCell,
+    Data,
+    DidCreateCell,
+    DidForkCell,
+    DidUpdateCell,
+    ForkCell,
+    Notebook,
+    RunCell,
+    Stdout,
+    UpdateCell,
+)
 from mvnb.worker import Worker
 
 
@@ -35,7 +45,7 @@ class _Server(object):
     def __init__(self, config):
         self.config = config
         self.users = set()
-        self.workers = bidict()
+        self.notebook = Notebook()
         self.requests = Queue()
         self.responses = Queue()
 
@@ -56,8 +66,8 @@ class _Server(object):
 
     async def watch_responses(self):
         while True:
-            msg = await self.responses.get()
-            await self.handle_response(msg)
+            msg, sender = await self.responses.get()
+            await self.handle_response(msg, sender)
 
     @singledispatchmethod
     async def handle_request(self, _):
@@ -65,13 +75,13 @@ class _Server(object):
 
     @handle_request.register(CreateCell)
     async def _(self, msg):
-        worker = self.create_worker(msg.cell)
+        worker = Worker(self.config, self.responses.put)
         await worker.start_root(msg, self.config.repl)
 
     @handle_request.register(ForkCell)
     async def _(self, msg):
-        parent = self.workers[msg.parent]
-        worker = self.create_worker(msg.cell)
+        parent = self.notebook.cell(msg.parent).worker
+        worker = Worker(self.config, self.responses.put)
         addr, recv = _socket_address(), Event()
         coro = worker.start_fork(msg, addr, recv)
         create_task(coro)
@@ -80,22 +90,44 @@ class _Server(object):
 
     @handle_request.register(UpdateCell)
     async def _(self, msg):
-        await self.workers[msg.cell].put(msg)
+        self.notebook.update(msg)
+        res = DidUpdateCell(request=msg)
+        await self.responses.put((res, self))
 
     @handle_request.register(RunCell)
     async def _(self, msg):
-        await self.workers[msg.cell].put(msg)
+        cell = self.notebook.cell(msg.cell)
+        await cell.worker.put(msg, cell.code)
 
     @singledispatchmethod
-    async def handle_response(self, msg):
+    async def handle_response(self, msg, _):
+        self.notebook.update(msg)
+        await self.broadcast(msg)
+
+    @handle_response.register(DidCreateCell)
+    async def _(self, msg, sender):
+        self.notebook.update(msg)
+        cell = self.notebook.cell(msg.request.cell)
+        cell.worker = sender
+        await self.broadcast(msg)
+
+    @handle_response.register(DidForkCell)
+    async def _(self, msg, sender):
+        self.notebook.update(msg)
+        cell = self.notebook.cell(msg.request.cell)
+        cell.worker = sender
+        await self.broadcast(msg)
+
+    @handle_response.register(Stdout)
+    async def _(self, msg, sender):
+        msg.cell = self.notebook.name(sender)
+        self.notebook.update(msg)
+        await self.broadcast(msg)
+
+    async def broadcast(self, msg):
         txt = msg.to_json()
         for usr in self.users:
             await usr.write_message(txt)
-
-    def create_worker(self, name):
-        worker = Worker(name, self.config, self.responses.put)
-        self.workers[name] = worker
-        return worker
 
 
 class _Handler(WebSocketHandler):
