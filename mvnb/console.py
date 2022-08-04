@@ -5,7 +5,7 @@ from sys import stdin
 
 from mvnb.client import Client
 from mvnb.command import Command, Create, Goto, Run, Update
-from mvnb.message import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
+from mvnb.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
 from mvnb.reader import Reader
 
 

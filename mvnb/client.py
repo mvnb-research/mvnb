@@ -3,7 +3,7 @@ from functools import singledispatchmethod
 
 from tornado.websocket import websocket_connect
 
-from mvnb.message import Message, Output, Response
+from mvnb.data import Data, Output, Response
 
 
 class Client(object):
@@ -28,7 +28,7 @@ class Client(object):
     async def _read_message(self):
         while True:
             txt = await self._connection.read_message()
-            msg = Message.from_json(txt)
+            msg = Data.from_json(txt)
             await self._handle_message(msg)
 
     @singledispatchmethod
