@@ -1,6 +1,5 @@
 from asyncio import new_event_loop
 from functools import singledispatchmethod
-from os import isatty
 from shlex import split
 from sys import stdin
 
