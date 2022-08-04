@@ -1,3 +1,4 @@
+from atexit import register
 from readline import (
     clear_history,
     read_history_file,
@@ -11,6 +12,7 @@ class Reader(object):
     def __init__(self, config):
         self._config = config
         self._history_file = None
+        register(self._save_history)
 
     def command_input(self, prompt):
         self._switch_history(self._config.command_history)
@@ -20,7 +22,7 @@ class Reader(object):
         self._switch_history(self._config.code_history)
         return self._input(prompt)
 
-    def save_history(self):
+    def _save_history(self):
         if self._history_file:
             write_history_file(self._history_file)
 
@@ -31,7 +33,7 @@ class Reader(object):
 
     def _switch_history(self, path):
         if path is not self._history_file:
-            self.save_history()
+            self._save_history()
             self._load_history(path)
             self._history_file = path
 
