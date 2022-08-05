@@ -50,9 +50,8 @@ class _Server(object):
         self.responses = Pipeline(self.handle_response)
 
     async def start(self):
-        dct = dict(users=self.users, requests=self.requests)
-        app = Application([("/", _Handler, dct)])
-        app.listen(address=self.config.address, port=self.config.port)
+        app = _Application(self.config, self.users, self.requests)
+        app.listen()
 
         req = self.requests.start()
         res = self.responses.start()
@@ -117,6 +116,19 @@ class _Server(object):
         txt = msg.to_json()
         for usr in self.users:
             await usr.write_message(txt)
+
+
+class _Application(Application):
+    def __init__(self, config, users, requests):
+        self.config = config
+        super().__init__(
+            [
+                (r"/", _Handler, dict(users=users, requests=requests)),
+            ]
+        )
+
+    def listen(self):
+        super().listen(address=self.config.address, port=self.config.port)
 
 
 class _Handler(WebSocketHandler):
