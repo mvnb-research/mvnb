@@ -11,7 +11,7 @@ from tempfile import gettempdir
 from threading import Thread
 from uuid import uuid4
 
-from tornado.web import Application
+from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
 from mvnb.data import (
@@ -19,6 +19,7 @@ from mvnb.data import (
     Data,
     DidCreateCell,
     DidForkCell,
+    DidRunCell,
     DidUpdateCell,
     ForkCell,
     Notebook,
@@ -50,12 +51,16 @@ class _Server(object):
         self.responses = Pipeline(self.handle_response)
 
     async def start(self):
-        app = _Application(self.config, self.users, self.requests)
+        app = _Application(self.config, self.users, self.requests, self.on_callback)
         app.listen()
 
         req = self.requests.start()
         res = self.responses.start()
         await wait([req, res], return_when=FIRST_COMPLETED)
+
+    async def on_callback(self, msg):
+        res = DidRunCell(request=msg)
+        await self.broadcast(res)
 
     @singledispatchmethod
     async def handle_request(self, _):
@@ -119,11 +124,12 @@ class _Server(object):
 
 
 class _Application(Application):
-    def __init__(self, config, users, requests):
+    def __init__(self, config, users, requests, on_callback):
         self.config = config
         super().__init__(
             [
                 (r"/", _Handler, dict(users=users, requests=requests)),
+                (r"/callback", _WorkerHandler, dict(on_callback=on_callback)),
             ]
         )
 
@@ -145,6 +151,15 @@ class _Handler(WebSocketHandler):
     async def on_message(self, msg):
         msg = Data.from_json(msg)
         await self.requests.put(msg)
+
+
+class _WorkerHandler(RequestHandler):
+    def initialize(self, on_callback):
+        self._on_callback = on_callback
+
+    async def post(self):
+        msg = Data.from_json(self.request.body)
+        await self._on_callback(msg)
 
 
 def _socket_address():
