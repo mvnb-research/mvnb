@@ -1,4 +1,4 @@
-from asyncio import Event, Queue, create_task, get_event_loop
+from asyncio import Event, create_task, get_event_loop
 from contextlib import contextmanager
 from functools import singledispatchmethod
 from multiprocessing.reduction import recvfds
@@ -11,6 +11,7 @@ from termios import TCSANOW
 from tty import setraw
 
 from mvnb.data import DidCreateCell, DidForkCell, DidRunCell, ForkCell, RunCell, Stdout
+from mvnb.pipeline import Pipeline
 
 
 class Worker(object):
@@ -19,7 +20,7 @@ class Worker(object):
         self._response = response
         self._fd = None
         self._pid = None
-        self._requests = Queue()
+        self._requests = Pipeline(self._handle_request)
         self._writable = Event()
 
     async def start_root(self, msg, cmd):
@@ -28,7 +29,7 @@ class Worker(object):
             self._pid = _popen(cmd, fd2)
         await self._start()
         res = DidCreateCell(request=msg)
-        await self._response((res, self))
+        await self._response(res, self)
 
     async def start_fork(self, msg, addr, recv):
         with _connect(addr) as sock:
@@ -37,25 +38,19 @@ class Worker(object):
             self._pid = await _recv_pid(sock)
         await self._start()
         res = DidForkCell(request=msg)
-        await self._response((res, self))
+        await self._response(res, self)
 
     async def put(self, msg, *args):
-        await self._requests.put((msg, *args))
+        await self._requests.put(msg, *args)
 
     async def _start(self):
         get_event_loop().add_reader(self._fd, self._read_callback)
-        create_task(self._watch_requests())
+        self._requests.start()
         await self._writable.wait()
 
     def _read_callback(self):
         data = read(self._fd, 1024)
         create_task(self._read_callback_async(data))
-
-    async def _watch_requests(self):
-        while True:
-            req = await self._requests.get()
-            msg, args = req[0], req[1:]
-            await self._handle_request(msg, *args)
 
     async def _read_callback_async(self, data):
         for line in data.splitlines(True):
@@ -64,7 +59,7 @@ class Worker(object):
             else:
                 txt = line.decode()
                 res = Stdout(text=txt)
-                await self._response((res, self))
+                await self._response(res, self)
 
     @singledispatchmethod
     async def _handle_request(self, _):
@@ -80,7 +75,7 @@ class Worker(object):
     async def _(self, msg, code):
         await self._write(code)
         res = DidRunCell(request=msg)
-        await self._response((res, self))
+        await self._response(res, self)
 
     async def _write(self, text):
         for line in text.splitlines():
