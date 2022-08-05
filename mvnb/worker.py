@@ -1,4 +1,4 @@
-from asyncio import Event, create_task, get_event_loop
+from asyncio import create_task, get_event_loop
 from contextlib import contextmanager
 from functools import singledispatchmethod
 from multiprocessing.reduction import recvfds
@@ -10,7 +10,7 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from mvnb.data import DidCreateCell, DidForkCell, DidRunCell, ForkCell, RunCell, Stdout
+from mvnb.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
 from mvnb.pipeline import Pipeline
 
 
@@ -21,13 +21,12 @@ class Worker(object):
         self._fd = None
         self._pid = None
         self._requests = Pipeline(self._handle_request)
-        self._writable = Event()
 
     async def start_root(self, msg, cmd):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
             self._pid = _popen(cmd, fd2)
-        await self._start()
+        self._start()
         res = DidCreateCell(request=msg)
         await self._response(res, self)
 
@@ -36,30 +35,20 @@ class Worker(object):
             recv.set()
             self._fd = await _recv_fd(sock)
             self._pid = await _recv_pid(sock)
-        await self._start()
+        self._start()
         res = DidForkCell(request=msg)
         await self._response(res, self)
 
     async def put(self, msg, *args):
         await self._requests.put(msg, *args)
 
-    async def _start(self):
+    def _start(self):
         get_event_loop().add_reader(self._fd, self._read_callback)
         self._requests.start()
-        await self._writable.wait()
 
     def _read_callback(self):
-        data = read(self._fd, 1024)
-        create_task(self._read_callback_async(data))
-
-    async def _read_callback_async(self, data):
-        for line in data.splitlines(True):
-            if self._config.prompt.match(line):
-                self._writable.set()
-            else:
-                txt = line.decode()
-                res = Stdout(text=txt)
-                await self._response(res, self)
+        txt = read(self._fd, 1024).decode()
+        create_task(self._response(Stdout(text=txt), self))
 
     @singledispatchmethod
     async def _handle_request(self, _):
@@ -67,27 +56,20 @@ class Worker(object):
 
     @_handle_request.register(ForkCell)
     async def _(self, _, addr):
-        code = self._config.fork
-        code = code.replace("__addr__", addr)
-        await self._write(code)
+        fork = self._config.fork
+        fork = fork.replace("__address__", addr)
+        self._write(fork)
 
     @_handle_request.register(RunCell)
     async def _(self, msg, code):
-        await self._write(code)
-        res = DidRunCell(request=msg)
-        await self._response(res, self)
+        url = f"http://{self._config.address}:{self._config.port}/callback"
+        callback = self._config.callback
+        callback = callback.replace("__url__", url)
+        callback = callback.replace("__message__", msg.to_json())
+        self._write(f"{code}\n{callback}")
 
-    async def _write(self, text):
-        for line in text.splitlines():
-            await self._write_line(line)
-        await self._writable.wait()
-
-    async def _write_line(self, line):
-        await self._writable.wait()
-        self._writable.clear()
-        self._write_data(f"{line}\n".encode())
-
-    def _write_data(self, data):
+    def _write(self, text):
+        data = f"{text}\n".encode()
         while data:
             if fd := _select_write(self._fd):
                 data = _write(fd, data)
