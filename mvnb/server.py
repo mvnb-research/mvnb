@@ -1,7 +1,6 @@
 from asyncio import (
     FIRST_COMPLETED,
     Event,
-    Queue,
     create_task,
     new_event_loop,
     set_event_loop,
@@ -27,6 +26,7 @@ from mvnb.data import (
     Stdout,
     UpdateCell,
 )
+from mvnb.pipeline import Pipeline
 from mvnb.worker import Worker
 
 
@@ -46,28 +46,17 @@ class _Server(object):
         self.config = config
         self.users = set()
         self.notebook = Notebook()
-        self.requests = Queue()
-        self.responses = Queue()
+        self.requests = Pipeline(self.handle_request)
+        self.responses = Pipeline(self.handle_response)
 
     async def start(self):
         dct = dict(users=self.users, requests=self.requests)
         app = Application([("/", _Handler, dct)])
         app.listen(address=self.config.address, port=self.config.port)
 
-        req = self.watch_requests()
-        res = self.watch_responses()
+        req = self.requests.start()
+        res = self.responses.start()
         await wait([req, res], return_when=FIRST_COMPLETED)
-
-    async def watch_requests(self):
-        while True:
-            txt = await self.requests.get()
-            msg = Data.from_json(txt)
-            await self.handle_request(msg)
-
-    async def watch_responses(self):
-        while True:
-            msg, sender = await self.responses.get()
-            await self.handle_response(msg, sender)
 
     @singledispatchmethod
     async def handle_request(self, _):
@@ -92,7 +81,7 @@ class _Server(object):
     async def _(self, msg):
         self.notebook.update(msg)
         res = DidUpdateCell(request=msg)
-        await self.responses.put((res, self))
+        await self.responses.put(res, self)
 
     @handle_request.register(RunCell)
     async def _(self, msg):
@@ -142,6 +131,7 @@ class _Handler(WebSocketHandler):
         self.users.remove(self)
 
     async def on_message(self, msg):
+        msg = Data.from_json(msg)
         await self.requests.put(msg)
 
 
