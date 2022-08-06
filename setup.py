@@ -9,7 +9,8 @@ setup(
     packages=packages,
     entry_points=dict(
         console_scripts=[
-            f"{name}={name}.__main__:main",
+            f"{name}-server={name}.server:main",
+            f"{name}-console={name}.console:main",
         ]
     ),
     install_requires=[

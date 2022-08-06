@@ -5,8 +5,14 @@ from sys import stdin
 
 from mvnb.client import Client
 from mvnb.command import Command, Create, Exit, Goto, Run, Update
+from mvnb.config import Config
 from mvnb.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
 from mvnb.reader import Reader
+
+
+def main(args=None):
+    config = Config.from_args(args)
+    start(config)
 
 
 def start(config):
@@ -123,3 +129,7 @@ def _repl(func):
         except EOFError:
             stdin.isatty() and print()
             break
+
+
+if __name__ == "__main__":
+    main()

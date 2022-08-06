@@ -3,6 +3,7 @@ from asyncio import (
     Event,
     create_task,
     new_event_loop,
+    run,
     set_event_loop,
     wait,
 )
@@ -14,6 +15,7 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
+from mvnb.config import Config
 from mvnb.data import (
     CreateCell,
     Data,
@@ -29,6 +31,15 @@ from mvnb.data import (
 )
 from mvnb.pipeline import Pipeline
 from mvnb.worker import Worker
+
+
+def main(args=None):
+    config = Config.from_args(args)
+    server = _Server(config)
+    try:
+        run(server.start())
+    except KeyboardInterrupt:
+        pass
 
 
 def start(config):
@@ -164,3 +175,7 @@ class _WorkerHandler(RequestHandler):
 
 def _socket_address():
     return f"{gettempdir()}/{uuid4().hex}.sock"
+
+
+if __name__ == "__main__":
+    main()
