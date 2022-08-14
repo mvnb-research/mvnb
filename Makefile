@@ -120,6 +120,6 @@ clean-vscode:
 .vscode/settings.json: | .vscode
 	echo '{' > $@
 	echo '  "python.linting.flake8Enabled": true,' >> $@
-	echo '  "python.defaultInterpreterPath": "$(python)"' >> $@
+	echo '  "python.defaultInterpreterPath": "$(python)",' >> $@
 	echo '  "explorer.excludeGitIgnore": true' >> $@
 	echo '}' >> $@
