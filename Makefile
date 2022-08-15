@@ -17,7 +17,7 @@ override installed = $(venv)/.installed
 setup: install
 
 .PHONY: setup-dev
-setup-dev: setup $(bin)/flake8 vscode
+setup-dev: setup vscode
 
 .PHONY: check
 check: isort black flake8 coverage
@@ -73,11 +73,11 @@ $(bin)/pytest: $(pip)
 
 # flake8 ----------------------------------------------------------------------
 .PHONY: flake8
-flake8: $(bin)/flake8 $(installed)
+flake8: $(bin)/pflake8 $(installed)
 	$< setup.py $(src) test
 
-$(bin)/flake8: $(pip)
-	$< install flake8 flake8-black flake8-tidy-imports
+$(bin)/pflake8: $(pip)
+	$< install flake8-black flake8-tidy-imports pyproject-flake8
 
 # black -----------------------------------------------------------------------
 .PHONY: black
