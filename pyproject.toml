@@ -10,6 +10,16 @@ dependencies = [
     "tornado >=6.2.0,<6.3.0"
 ]
 
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "flake8-black",
+    "isort",
+    "pytest-cov",
+    "pytest-timeout"
+]
+
 [project.scripts]
 mvnb-cui = "mvnb.cui.__main__:main"
 mvnb-server = "mvnb.server.__main__:main"
