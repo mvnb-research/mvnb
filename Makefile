@@ -1,6 +1,6 @@
 PYTHON := python3
 
-override src = mvnb
+override src = src
 
 override venv = venv
 

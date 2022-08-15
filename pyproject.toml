@@ -14,8 +14,9 @@ dependencies = [
 mvnb-server = "mvnb.server:main"
 mvnb-console = "mvnb.console:main"
 
-[tool.setuptools.packages.find]
-include = ["mvnb"]
+[tool.setuptools]
+packages = ["mvnb"]
+package-dir = {mvnb = "src"}
 
 [tool.coverage.run]
 branch = true
