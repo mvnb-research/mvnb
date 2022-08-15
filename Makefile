@@ -73,11 +73,11 @@ $(bin)/pytest: $(pip)
 
 # flake8 ----------------------------------------------------------------------
 .PHONY: flake8
-flake8: $(bin)/pflake8 $(installed)
+flake8: $(bin)/flake8 $(installed)
 	$< $(src) test
 
-$(bin)/pflake8: $(pip)
-	$< install flake8-black pyproject-flake8
+$(bin)/flake8: $(pip)
+	$< install flake8 flake8-black
 
 # black -----------------------------------------------------------------------
 .PHONY: black

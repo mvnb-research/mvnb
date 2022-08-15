@@ -22,11 +22,12 @@ package-dir = {mvnb = "src"}
 branch = true
 data_file = ".coverage/.coverage"
 
-[tool.flake8]
-max-line-length = 88
+[tool.black]
+line-length = 79
 
 [tool.isort]
 profile = "black"
+line_length = 79
 
 [tool.pytest.ini_options]
 addopts = "-vv"

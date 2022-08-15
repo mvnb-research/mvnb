@@ -89,7 +89,9 @@ def _openpty():
 
 
 def _popen(args, fd):
-    return Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True).pid
+    return Popen(
+        args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True
+    ).pid
 
 
 @contextmanager

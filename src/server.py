@@ -62,7 +62,9 @@ class _Server(object):
         self.responses = Pipeline(self.handle_response)
 
     async def start(self):
-        app = _Application(self.config, self.users, self.requests, self.on_callback)
+        app = _Application(
+            self.config, self.users, self.requests, self.on_callback
+        )
         app.listen()
 
         req = self.requests.start()
