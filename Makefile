@@ -74,7 +74,7 @@ $(bin)/pytest: $(pip)
 # flake8 ----------------------------------------------------------------------
 .PHONY: flake8
 flake8: $(bin)/pflake8 $(installed)
-	$< setup.py $(src) test
+	$< $(src) test
 
 $(bin)/pflake8: $(pip)
 	$< install flake8-black flake8-tidy-imports pyproject-flake8
@@ -82,11 +82,11 @@ $(bin)/pflake8: $(pip)
 # black -----------------------------------------------------------------------
 .PHONY: black
 black: $(bin)/black $(installed)
-	$< --quiet --check setup.py $(src) test
+	$< --quiet --check $(src) test
 
 .PHONY: black-apply
 black-apply: $(bin)/black $(installed)
-	$< --quiet setup.py $(src) test
+	$< --quiet $(src) test
 
 $(bin)/black: $(pip)
 	$< install black
@@ -94,11 +94,11 @@ $(bin)/black: $(pip)
 # isort -----------------------------------------------------------------------
 .PHONY: isort
 isort: $(bin)/isort $(installed)
-	$< --check-only setup.py $(src) test
+	$< --check-only $(src) test
 
 .PHONY: isort-apply
 isort-apply: $(bin)/isort $(installed)
-	$< setup.py $(src) test
+	$< $(src) test
 
 $(bin)/isort: $(pip)
 	$< install isort
