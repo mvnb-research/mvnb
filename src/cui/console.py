@@ -3,10 +3,10 @@ from functools import singledispatchmethod
 from shlex import split
 from sys import stdin
 
+from ..model.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
+from ..util.config import Config
 from .client import Client
 from .command import Command, Create, Exit, Goto, Run, Update
-from .config import Config
-from .data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
 from .reader import Reader
 
 
@@ -129,7 +129,3 @@ def _repl(func):
         except EOFError:
             stdin.isatty() and print()
             break
-
-
-if __name__ == "__main__":
-    main()

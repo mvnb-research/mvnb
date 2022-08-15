@@ -15,8 +15,7 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from .config import Config
-from .data import (
+from ..model.data import (
     CreateCell,
     Data,
     DidCreateCell,
@@ -29,6 +28,7 @@ from .data import (
     Stdout,
     UpdateCell,
 )
+from ..util.config import Config
 from .pipeline import Pipeline
 from .worker import Worker
 
@@ -177,7 +177,3 @@ class _WorkerHandler(RequestHandler):
 
 def _socket_address():
     return f"{gettempdir()}/{uuid4().hex}.sock"
-
-
-if __name__ == "__main__":
-    main()

@@ -11,11 +11,11 @@ dependencies = [
 ]
 
 [project.scripts]
-mvnb-server = "mvnb.server:main"
-mvnb-console = "mvnb.console:main"
+mvnb-cui = "mvnb.cui.__main__:main"
+mvnb-server = "mvnb.server.__main__:main"
 
 [tool.setuptools]
-packages = ["mvnb"]
+packages = ["mvnb.cui", "mvnb.model", "mvnb.server", "mvnb.util"]
 package-dir = {mvnb = "src"}
 
 [tool.coverage.run]

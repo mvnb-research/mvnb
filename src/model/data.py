@@ -1,7 +1,7 @@
 from functools import singledispatchmethod
 from uuid import uuid4
 
-from .record import Record, field
+from ..util.record import Record, field
 
 
 class Data(Record, abst=True, group=object()):

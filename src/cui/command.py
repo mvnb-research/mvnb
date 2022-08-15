@@ -1,7 +1,7 @@
 from random import choices
 from string import ascii_lowercase
 
-from .record import Record, argument, option
+from ..util.record import Record, argument, option
 
 
 class Command(Record, abst=True, group=object()):

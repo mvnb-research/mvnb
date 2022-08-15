@@ -10,7 +10,7 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from .data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
+from ..model.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
 from .pipeline import Pipeline
 
 
