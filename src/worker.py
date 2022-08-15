@@ -10,8 +10,8 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from mvnb.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
-from mvnb.pipeline import Pipeline
+from .data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
+from .pipeline import Pipeline
 
 
 class Worker(object):

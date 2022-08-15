@@ -23,7 +23,6 @@ branch = true
 data_file = ".coverage/.coverage"
 
 [tool.flake8]
-ban-relative-imports = true
 max-line-length = 88
 
 [tool.isort]

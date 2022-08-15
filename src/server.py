@@ -15,8 +15,8 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from mvnb.config import Config
-from mvnb.data import (
+from .config import Config
+from .data import (
     CreateCell,
     Data,
     DidCreateCell,
@@ -29,8 +29,8 @@ from mvnb.data import (
     Stdout,
     UpdateCell,
 )
-from mvnb.pipeline import Pipeline
-from mvnb.worker import Worker
+from .pipeline import Pipeline
+from .worker import Worker
 
 
 def main(args=None):

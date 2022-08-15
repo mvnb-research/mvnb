@@ -77,7 +77,7 @@ flake8: $(bin)/pflake8 $(installed)
 	$< $(src) test
 
 $(bin)/pflake8: $(pip)
-	$< install flake8-black flake8-tidy-imports pyproject-flake8
+	$< install flake8-black pyproject-flake8
 
 # black -----------------------------------------------------------------------
 .PHONY: black
