@@ -15,8 +15,7 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from mvnb.config import Config
-from mvnb.data import (
+from ..model.data import (
     CreateCell,
     Data,
     DidCreateCell,
@@ -29,8 +28,9 @@ from mvnb.data import (
     Stdout,
     UpdateCell,
 )
-from mvnb.pipeline import Pipeline
-from mvnb.worker import Worker
+from ..util.config import Config
+from .pipeline import Pipeline
+from .worker import Worker
 
 
 def main(args=None):
@@ -62,7 +62,9 @@ class _Server(object):
         self.responses = Pipeline(self.handle_response)
 
     async def start(self):
-        app = _Application(self.config, self.users, self.requests, self.on_callback)
+        app = _Application(
+            self.config, self.users, self.requests, self.on_callback
+        )
         app.listen()
 
         req = self.requests.start()
@@ -175,7 +177,3 @@ class _WorkerHandler(RequestHandler):
 
 def _socket_address():
     return f"{gettempdir()}/{uuid4().hex}.sock"
-
-
-if __name__ == "__main__":
-    main()

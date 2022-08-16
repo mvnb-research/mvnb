@@ -1,0 +1,6 @@
+{
+  "source": "src/gui/index.html",
+  "devDependencies": {
+    "parcel": "^2.7.0"
+  }
+}

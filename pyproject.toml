@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mvnb"
+version = "0.0.0"
+dependencies = [
+  "bidict>=0.22.0,<0.23.0",
+  "tornado>=6.2.0,<6.3.0",
+]
+
+[project.scripts]
+mvnb-cui = "mvnb.cui.__main__:main"
+mvnb-server = "mvnb.server.__main__:main"
+
+[tool.setuptools]
+packages = [
+  "mvnb.cui",
+  "mvnb.model",
+  "mvnb.server",
+  "mvnb.util",
+]
+
+[tool.setuptools.package-dir]
+mvnb = "src"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "flake8",
+  "flake8-black",
+  "black",
+  "isort",
+  "pytest-cov",
+  "pytest-timeout",
+]
+
+[tool.hatch.envs.default.scripts]
+format = ["format-isort", "format-black"]
+format-isort = "isort script src test"
+format-black = "black --quiet script src test"
+
+check = ["check-flake8", "check-black", "check-isort", "check-coverage"]
+check-flake8 = "flake8 script src test"
+check-black = "black --quiet --check script src test"
+check-isort = "isort --check-only script src test"
+check-coverage = "pytest --cov src --cov-report=term --cov-report=xml"
+
+vscode = "python script/generate-vscode-settings.py"
+
+[tool.coverage.run]
+branch = true
+data_file = ".coverage/.coverage"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.pytest.ini_options]
+addopts = "-vv"
+filterwarnings = "error"
+timeout = 1
