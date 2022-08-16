@@ -10,16 +10,6 @@ dependencies = [
   "tornado>=6.2.0,<6.3.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "black",
-    "flake8",
-    "flake8-black",
-    "isort",
-    "pytest-cov",
-    "pytest-timeout",
-]
-
 [project.scripts]
 mvnb-cui = "mvnb.cui.__main__:main"
 mvnb-server = "mvnb.server.__main__:main"
@@ -34,6 +24,29 @@ packages = [
 
 [tool.setuptools.package-dir]
 mvnb = "src"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "flake8",
+  "flake8-black",
+  "black",
+  "isort",
+  "pytest-cov",
+  "pytest-timeout",
+]
+
+[tool.hatch.envs.default.scripts]
+format = ["format-isort", "format-black"]
+format-isort = "isort script src test"
+format-black = "black --quiet script src test"
+
+check = ["check-flake8", "check-black", "check-isort", "check-coverage"]
+check-flake8 = "flake8 script src test"
+check-black = "black --quiet --check script src test"
+check-isort = "isort --check-only script src test"
+check-coverage = "pytest --cov src --cov-report=term --cov-report=xml"
+
+vscode = "python script/generate-vscode-settings.py"
 
 [tool.coverage.run]
 branch = true
