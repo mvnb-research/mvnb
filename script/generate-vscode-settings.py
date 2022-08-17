@@ -8,12 +8,17 @@ gitignore = vscode / ".gitignore"
 
 settings_json = vscode / "settings.json"
 
+python = executable
+
+pflake8 = str(Path(executable).parent / "pflake8")
+
 settings = {
     "coverage-gutters.showLineCoverage": True,
     "explorer.excludeGitIgnore": False,
-    "python.linting.flake8Enabled": True,
-    "python.testing.pytestEnabled": True,
     "python.defaultInterpreterPath": executable,
+    "python.linting.flake8Enabled": True,
+    "python.linting.flake8Path": pflake8,
+    "python.testing.pytestEnabled": True,
 }
 
 if __name__ == "__main__":

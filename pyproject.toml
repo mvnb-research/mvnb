@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "mvnb"
@@ -14,37 +14,27 @@ dependencies = [
 mvnb-cui = "mvnb.cui.__main__:main"
 mvnb-server = "mvnb.server.__main__:main"
 
-[tool.setuptools]
-packages = [
-  "mvnb.cui",
-  "mvnb.model",
-  "mvnb.server",
-  "mvnb.util",
-]
-
-[tool.setuptools.package-dir]
-mvnb = "src"
-
 [tool.hatch.envs.default]
 dependencies = [
-  "flake8",
-  "flake8-black",
   "black",
   "isort",
+  "flake8-black",
+  "flake8-tidy-imports",
+  "pyproject-flake8",
   "pytest-cov",
   "pytest-timeout",
 ]
 
 [tool.hatch.envs.default.scripts]
 format = ["format-isort", "format-black"]
-format-isort = "isort script src test"
-format-black = "black --quiet script src test"
+format-isort = "isort script mvnb test"
+format-black = "black --quiet script mvnb test"
 
 check = ["check-flake8", "check-black", "check-isort", "check-coverage"]
-check-flake8 = "flake8 script src test"
-check-black = "black --quiet --check script src test"
-check-isort = "isort --check-only script src test"
-check-coverage = "pytest --cov src --cov-report=term --cov-report=xml"
+check-flake8 = "pflake8 script mvnb test"
+check-black = "black --quiet --check script mvnb test"
+check-isort = "isort --check-only script mvnb test"
+check-coverage = "pytest --cov mvnb --cov-report=term --cov-report=xml"
 
 vscode = "python script/generate-vscode-settings.py"
 
@@ -52,12 +42,12 @@ vscode = "python script/generate-vscode-settings.py"
 branch = true
 data_file = ".coverage/.coverage"
 
-[tool.black]
-line-length = 79
-
 [tool.isort]
 profile = "black"
-line_length = 79
+
+[tool.flake8]
+ban-relative-imports = true
+max-line-length = 88
 
 [tool.pytest.ini_options]
 addopts = "-vv"

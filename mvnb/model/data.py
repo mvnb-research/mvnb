@@ -1,7 +1,7 @@
 from functools import singledispatchmethod
 from uuid import uuid4
 
-from ..util.record import Record, field
+from mvnb.util.record import Record, field
 
 
 class Data(Record, abst=True, group=object()):
