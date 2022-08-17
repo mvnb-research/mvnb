@@ -6,7 +6,7 @@ from shlex import split
 from sys import executable
 
 from mvnb.util import _bootstrap
-from mvnb.util.record import Record, group, option
+from mvnb.util._record import Record, group, option
 
 _package = __package__.split(".")[0]
 
