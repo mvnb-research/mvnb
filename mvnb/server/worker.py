@@ -10,8 +10,8 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from ..model.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
-from .pipeline import Pipeline
+from mvnb.model.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
+from mvnb.server.pipeline import Pipeline
 
 
 class Worker(object):
@@ -89,9 +89,7 @@ def _openpty():
 
 
 def _popen(args, fd):
-    return Popen(
-        args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True
-    ).pid
+    return Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True).pid
 
 
 @contextmanager

@@ -15,7 +15,7 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from ..model.data import (
+from mvnb.model.data import (
     CreateCell,
     Data,
     DidCreateCell,
@@ -28,9 +28,9 @@ from ..model.data import (
     Stdout,
     UpdateCell,
 )
-from ..util.config import Config
-from .pipeline import Pipeline
-from .worker import Worker
+from mvnb.server.pipeline import Pipeline
+from mvnb.server.worker import Worker
+from mvnb.util.config import Config
 
 
 def main(args=None):
@@ -62,9 +62,7 @@ class _Server(object):
         self.responses = Pipeline(self.handle_response)
 
     async def start(self):
-        app = _Application(
-            self.config, self.users, self.requests, self.on_callback
-        )
+        app = _Application(self.config, self.users, self.requests, self.on_callback)
         app.listen()
 
         req = self.requests.start()

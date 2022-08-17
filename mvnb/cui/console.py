@@ -3,11 +3,11 @@ from functools import singledispatchmethod
 from shlex import split
 from sys import stdin
 
-from ..model.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
-from ..util.config import Config
-from .client import Client
-from .command import Command, Create, Exit, Goto, Run, Update
-from .reader import Reader
+from mvnb.cui.client import Client
+from mvnb.cui.command import Command, Create, Exit, Goto, Run, Update
+from mvnb.cui.reader import Reader
+from mvnb.model.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
+from mvnb.util.config import Config
 
 
 def main(args=None):
