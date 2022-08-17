@@ -26,14 +26,14 @@ dependencies = [
 
 [tool.hatch.envs.default.scripts]
 format = ["format-isort", "format-black"]
-format-isort = "isort script src test"
-format-black = "black --quiet script src test"
+format-isort = "isort script mvnb test"
+format-black = "black --quiet script mvnb test"
 
 check = ["check-flake8", "check-black", "check-isort", "check-coverage"]
-check-flake8 = "flake8 script src test"
-check-black = "black --quiet --check script src test"
-check-isort = "isort --check-only script src test"
-check-coverage = "pytest --cov src --cov-report=term --cov-report=xml"
+check-flake8 = "flake8 script mvnb test"
+check-black = "black --quiet --check script mvnb test"
+check-isort = "isort --check-only script mvnb test"
+check-coverage = "pytest --cov mvnb --cov-report=term --cov-report=xml"
 
 vscode = "python script/generate-vscode-settings.py"
 
