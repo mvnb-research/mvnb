@@ -22,9 +22,6 @@ packages = [
   "mvnb.util",
 ]
 
-[tool.setuptools.package-dir]
-mvnb = "src"
-
 [tool.hatch.envs.default]
 dependencies = [
   "flake8",
