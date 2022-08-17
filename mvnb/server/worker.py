@@ -10,7 +10,7 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from mvnb.model.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
+from mvnb.data.data import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
 from mvnb.server.pipeline import Pipeline
 
 

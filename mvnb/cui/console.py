@@ -6,7 +6,7 @@ from sys import stdin
 from mvnb.cui.client import Client
 from mvnb.cui.command import Command, Create, Exit, Goto, Run, Update
 from mvnb.cui.reader import Reader
-from mvnb.model.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
+from mvnb.data.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
 from mvnb.util.config import Config
 
 

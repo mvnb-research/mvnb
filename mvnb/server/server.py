@@ -15,7 +15,7 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from mvnb.model.data import (
+from mvnb.data.data import (
     CreateCell,
     Data,
     DidCreateCell,
