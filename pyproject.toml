@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "mvnb"
@@ -13,14 +13,6 @@ dependencies = [
 [project.scripts]
 mvnb-cui = "mvnb.cui.__main__:main"
 mvnb-server = "mvnb.server.__main__:main"
-
-[tool.setuptools]
-packages = [
-  "mvnb.cui",
-  "mvnb.model",
-  "mvnb.server",
-  "mvnb.util",
-]
 
 [tool.hatch.envs.default]
 dependencies = [
