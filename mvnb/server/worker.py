@@ -10,7 +10,7 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
-from mvnb.data.message import DidCreateCell, DidForkCell, ForkCell, RunCell, Stdout
+from mvnb.data.message import CreateCell, DidCreateCell, RunCell, Stdout
 from mvnb.server.pipeline import Pipeline
 
 
@@ -36,7 +36,7 @@ class Worker(object):
             self._fd = await _recv_fd(sock)
             self._pid = await _recv_pid(sock)
         self._start()
-        res = DidForkCell(request=msg)
+        res = DidCreateCell(request=msg)
         await self._response(res, self)
 
     async def put(self, msg, *args):
@@ -54,7 +54,7 @@ class Worker(object):
     async def _handle_request(self, _):
         pass
 
-    @_handle_request.register(ForkCell)
+    @_handle_request.register(CreateCell)
     async def _(self, _, addr):
         fork = self._config.fork
         fork = fork.replace("__address__", addr)

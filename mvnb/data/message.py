@@ -17,10 +17,6 @@ class Request(Message):
 
 
 class CreateCell(Request):
-    pass
-
-
-class ForkCell(Request):
     @field
     def parent(self, raw):
         return raw
@@ -43,10 +39,6 @@ class Response(Message):
 
 
 class DidCreateCell(Response):
-    pass
-
-
-class DidForkCell(Response):
     pass
 
 

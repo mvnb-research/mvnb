@@ -32,12 +32,6 @@ class Notebook(Model):
 
     @update.register(message.DidCreateCell)
     def _(self, msg):
-        cell = Cell(name=msg.request.cell)
-        self.cells.append(cell)
-        self._index[cell.name] = cell
-
-    @update.register(message.DidForkCell)
-    def _(self, msg):
         cell = Cell(name=msg.request.cell, parent=msg.request.parent)
         self.cells.append(cell)
         self._index[cell.name] = cell

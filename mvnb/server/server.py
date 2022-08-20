@@ -19,10 +19,8 @@ from mvnb.data.message import (
     CreateCell,
     Data,
     DidCreateCell,
-    DidForkCell,
     DidRunCell,
     DidUpdateCell,
-    ForkCell,
     RunCell,
     Stdout,
     UpdateCell,
@@ -79,18 +77,17 @@ class _Server(object):
 
     @handle_request.register(CreateCell)
     async def _(self, msg):
-        worker = Worker(self.config, self.responses.put)
-        await worker.start_root(msg, self.config.repl)
-
-    @handle_request.register(ForkCell)
-    async def _(self, msg):
-        parent = self.notebook.cell(msg.parent).worker
-        worker = Worker(self.config, self.responses.put)
-        addr, recv = _socket_address(), Event()
-        coro = worker.start_fork(msg, addr, recv)
-        create_task(coro)
-        await recv.wait()
-        await parent.put(msg, addr)
+        if msg.parent:
+            parent = self.notebook.cell(msg.parent).worker
+            worker = Worker(self.config, self.responses.put)
+            addr, recv = _socket_address(), Event()
+            coro = worker.start_fork(msg, addr, recv)
+            create_task(coro)
+            await recv.wait()
+            await parent.put(msg, addr)
+        else:
+            worker = Worker(self.config, self.responses.put)
+            await worker.start_root(msg, self.config.repl)
 
     @handle_request.register(UpdateCell)
     async def _(self, msg):
@@ -109,13 +106,6 @@ class _Server(object):
         await self.broadcast(msg)
 
     @handle_response.register(DidCreateCell)
-    async def _(self, msg, sender):
-        self.notebook.update(msg)
-        cell = self.notebook.cell(msg.request.cell)
-        cell.worker = sender
-        await self.broadcast(msg)
-
-    @handle_response.register(DidForkCell)
     async def _(self, msg, sender):
         self.notebook.update(msg)
         cell = self.notebook.cell(msg.request.cell)
