@@ -5,11 +5,7 @@ from mvnb.data.data import Data
 from mvnb.util.record import field
 
 
-class Model(Data):
-    pass
-
-
-class Notebook(Model):
+class Notebook(Data):
     def __init__(self, **values):
         super().__init__(**values)
         self._index = {}
@@ -48,7 +44,7 @@ class Notebook(Model):
         cell.results.append(result)
 
 
-class Cell(Model):
+class Cell(Data):
     def __init__(self, **values):
         super().__init__(**values)
         self.worker = None
@@ -70,7 +66,7 @@ class Cell(Model):
         return raw or []
 
 
-class Output(Model):
+class Output(Data):
     @field
     def type(self, raw):
         return raw

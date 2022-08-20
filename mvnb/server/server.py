@@ -25,7 +25,7 @@ from mvnb.data.message import (
     Stdout,
     UpdateCell,
 )
-from mvnb.data.model import Notebook
+from mvnb.data.notebook import Notebook
 from mvnb.server.pipeline import Pipeline
 from mvnb.server.worker import Worker
 from mvnb.util.config import Config
