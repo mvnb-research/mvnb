@@ -30,7 +30,7 @@ class Config(Record, prog=_package, group=object()):
     @option(help="repl command", metavar="<repl>")
     def repl(self, raw):
         raw = self._text_or_file(raw)
-        return split(raw or f"{executable} -i {_bootstrap.__file__}")
+        return split(raw or f"'{executable}' -i '{_bootstrap.__file__}'")
 
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
