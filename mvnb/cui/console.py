@@ -6,7 +6,8 @@ from sys import stdin
 from mvnb.cui.client import Client
 from mvnb.cui.command import Command, Create, Exit, Goto, Run, Update
 from mvnb.cui.reader import Reader
-from mvnb.model.data import CreateCell, ForkCell, RunCell, Stdout, UpdateCell
+from mvnb.data.output import Stdout
+from mvnb.data.request import CreateCell, RunCell, UpdateCell
 from mvnb.util.config import Config
 
 
@@ -74,19 +75,14 @@ class _Console(object):
 
     @handle_command.register(Create)
     async def _(self, cmd):
-        if self.cell:
-            msg = ForkCell(cell=cmd.cell, parent=self.cell)
-            await self.client.send(msg)
-            self.cell = cmd.cell
-        else:
-            msg = CreateCell(cell=cmd.cell)
-            await self.client.send(msg)
-            self.cell = cmd.cell
+        msg = CreateCell(cell=cmd.cell, parent=self.cell)
+        await self.client.send(msg)
+        self.cell = cmd.cell
 
     @handle_command.register(Update)
     async def _(self, _):
         self.read_code()
-        msg = UpdateCell(cell=self.cell, code=self.code)
+        msg = UpdateCell(cell=self.cell, source=self.code)
         await self.client.send(msg)
 
     @handle_command.register(Run)

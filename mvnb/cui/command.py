@@ -1,7 +1,7 @@
 from random import choices
 from string import ascii_lowercase
 
-from mvnb.util.record import Record, argument, option
+from mvnb.util._record import Record, argument, option
 
 
 class Command(Record, abst=True, group=object()):
