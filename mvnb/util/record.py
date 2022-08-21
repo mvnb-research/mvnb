@@ -6,6 +6,14 @@ class Record(object):
         self._raw = raw
         self._cache = {}
 
+    def __eq__(self, rec):
+        if rec.__class__ is self.__class__:
+            for _, f in self.fields:
+                if getattr(self, f.name) != getattr(rec, f.name):
+                    return False
+            return True
+        return False
+
     @classmethod
     @property
     def fields(cls):

@@ -107,3 +107,17 @@ def test_get_fields_inheritance():
     assert fields[1][1] is Bar.foo
     assert fields[2][0] is Bar
     assert fields[2][1] is Bar.baz
+
+
+def test_eq():
+    class Foo(Record):
+        @field
+        def foo(self, raw):
+            return int(raw)
+
+    class Bar(Record):
+        pass
+
+    assert Foo(foo=1) != Bar()
+    assert Foo(foo=1) != Foo(foo=2)
+    assert Foo(foo=1) == Foo(foo=1)
