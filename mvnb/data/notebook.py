@@ -10,7 +10,7 @@ class Notebook(Data):
 
 class Cell(Data):
     @field
-    def name(self, raw):
+    def id(self, raw):
         return raw
 
     @field

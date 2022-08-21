@@ -102,9 +102,9 @@ class _Server(object):
 
     @handle_response.register(DidCreateCell)
     async def _(self, msg, sender):
-        cell = Cell(name=msg.request.cell, parent=msg.request.parent)
+        cell = Cell(id=msg.request.cell, parent=msg.request.parent)
         self.notebook.cells.append(cell)
-        self.cells[cell.name] = cell
+        self.cells[cell.id] = cell
         self.workers[cell] = sender
         await self.broadcast(msg)
 
@@ -117,7 +117,7 @@ class _Server(object):
     @handle_response.register(Stdout)
     async def _(self, msg, sender):
         cell = self.workers.inverse[sender]
-        msg.cell = cell.name
+        msg.cell = cell.id
         out = Output(type="text", data=msg.text)
         cell.outputs.append(out)
         await self.broadcast(msg)
