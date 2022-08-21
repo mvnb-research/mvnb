@@ -15,17 +15,9 @@ from uuid import uuid4
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from mvnb.data.message import (
-    CreateCell,
-    Data,
-    DidCreateCell,
-    DidRunCell,
-    DidUpdateCell,
-    RunCell,
-    Stdout,
-    UpdateCell,
-)
+from mvnb.data.message import CreateCell, Data, RunCell, Stdout, UpdateCell
 from mvnb.data.notebook import Notebook
+from mvnb.data.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server.pipeline import Pipeline
 from mvnb.server.worker import Worker
 from mvnb.util.config import Config

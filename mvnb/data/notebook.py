@@ -1,6 +1,6 @@
 from functools import singledispatchmethod
 
-from mvnb.data import message
+from mvnb.data import message, response
 from mvnb.data.data import Data
 from mvnb.util.record import field
 
@@ -26,13 +26,13 @@ class Notebook(Data):
     def update(self, _):
         pass
 
-    @update.register(message.DidCreateCell)
+    @update.register(response.DidCreateCell)
     def _(self, msg):
         cell = Cell(name=msg.request.cell, parent=msg.request.parent)
         self.cells.append(cell)
         self._index[cell.name] = cell
 
-    @update.register(message.DidUpdateCell)
+    @update.register(response.DidUpdateCell)
     def _(self, msg):
         cell = self.cell(msg.request.cell)
         cell.code = msg.request.code

@@ -32,24 +32,6 @@ class RunCell(Request):
     pass
 
 
-class Response(Message):
-    @field
-    def request(self, raw):
-        return raw
-
-
-class DidCreateCell(Response):
-    pass
-
-
-class DidUpdateCell(Response):
-    pass
-
-
-class DidRunCell(Response):
-    pass
-
-
 class Output(Message):
     @field
     def cell(self, raw):
