@@ -4,13 +4,11 @@ from mvnb.data.data import Data
 from mvnb.util.record import field
 
 
-class Message(Data):
+class Request(Data):
     @field
     def id(self, raw):
         return raw or uuid4().hex
 
-
-class Request(Message):
     @field
     def cell(self, raw):
         return raw
