@@ -3,7 +3,7 @@ from functools import singledispatchmethod
 
 from tornado.websocket import websocket_connect
 
-from mvnb.data.message import Data, Output
+from mvnb.data.output import Data, Output
 from mvnb.data.response import Response
 
 

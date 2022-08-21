@@ -16,8 +16,8 @@ from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
 from mvnb.data.data import Data
-from mvnb.data.message import Stdout
 from mvnb.data.notebook import Notebook
+from mvnb.data.output import Stdout
 from mvnb.data.request import CreateCell, RunCell, UpdateCell
 from mvnb.data.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server.pipeline import Pipeline

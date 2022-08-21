@@ -1,6 +1,6 @@
 from functools import singledispatchmethod
 
-from mvnb.data import message, response
+from mvnb.data import output, response
 from mvnb.data.data import Data
 from mvnb.util.record import field
 
@@ -37,7 +37,7 @@ class Notebook(Data):
         cell = self.cell(msg.request.cell)
         cell.code = msg.request.code
 
-    @update.register(message.Stdout)
+    @update.register(output.Stdout)
     def _(self, msg):
         cell = self.cell(msg.cell)
         result = Output(type="text", data=msg.text)
