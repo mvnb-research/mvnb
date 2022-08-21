@@ -36,13 +36,13 @@ class Notebook(Data):
     @update.register(DidUpdateCell)
     def _(self, msg):
         cell = self.cell(msg.request.cell)
-        cell.code = msg.request.code
+        cell.source = msg.request.source
 
     @update.register(Stdout)
     def _(self, msg):
         cell = self.cell(msg.cell)
         result = Output(type="text", data=msg.text)
-        cell.results.append(result)
+        cell.outputs.append(result)
 
 
 class Cell(Data):
@@ -55,7 +55,7 @@ class Cell(Data):
         return raw
 
     @field
-    def code(self, raw):
+    def source(self, raw):
         return raw
 
     @field
@@ -63,7 +63,7 @@ class Cell(Data):
         return raw
 
     @field
-    def results(self, raw):
+    def outputs(self, raw):
         return raw or []
 
 

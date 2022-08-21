@@ -82,7 +82,7 @@ class _Console(object):
     @handle_command.register(Update)
     async def _(self, _):
         self.read_code()
-        msg = UpdateCell(cell=self.cell, code=self.code)
+        msg = UpdateCell(cell=self.cell, source=self.code)
         await self.client.send(msg)
 
     @handle_command.register(Run)

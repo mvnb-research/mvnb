@@ -22,7 +22,7 @@ class CreateCell(Request):
 
 class UpdateCell(Request):
     @field
-    def code(self, raw):
+    def source(self, raw):
         return raw
 
 

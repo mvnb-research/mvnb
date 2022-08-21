@@ -92,7 +92,7 @@ class _Server(object):
     @handle_request.register(RunCell)
     async def _(self, msg):
         cell = self.notebook.cell(msg.cell)
-        await cell.worker.put(msg, cell.code)
+        await cell.worker.put(msg, cell.source)
 
     @singledispatchmethod
     async def handle_response(self, msg, _):
