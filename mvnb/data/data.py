@@ -7,8 +7,9 @@ from mvnb.util.record import Record
 
 
 class Data(Record):
-    def __init_subclass__(cls):
-        _classes[cls.__name__] = cls
+    def __init_subclass__(cls, abst=False):
+        if not abst:
+            _classes[cls.__name__] = cls
 
     @staticmethod
     def from_json(json):

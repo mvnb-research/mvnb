@@ -2,7 +2,7 @@ from mvnb.data.data import Data
 from mvnb.util.record import field
 
 
-class Output(Data):
+class Output(Data, abst=True):
     @field
     def cell(self, raw):
         return raw

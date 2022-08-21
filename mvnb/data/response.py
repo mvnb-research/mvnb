@@ -2,7 +2,7 @@ from mvnb.data.data import Data
 from mvnb.util.record import field
 
 
-class Response(Data):
+class Response(Data, abst=True):
     @field
     def request(self, raw):
         return raw

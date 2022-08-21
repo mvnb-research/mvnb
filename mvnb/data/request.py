@@ -4,7 +4,7 @@ from mvnb.data.data import Data
 from mvnb.util.record import field
 
 
-class Request(Data):
+class Request(Data, abst=True):
     @field
     def id(self, raw):
         return raw or uuid4().hex
