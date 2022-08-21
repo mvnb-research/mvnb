@@ -1,7 +1,8 @@
 from functools import singledispatchmethod
 
-from mvnb.data import output, response
 from mvnb.data.data import Data
+from mvnb.data.output import Stdout
+from mvnb.data.response import DidCreateCell, DidUpdateCell
 from mvnb.util.record import field
 
 
@@ -26,18 +27,18 @@ class Notebook(Data):
     def update(self, _):
         pass
 
-    @update.register(response.DidCreateCell)
+    @update.register(DidCreateCell)
     def _(self, msg):
         cell = Cell(name=msg.request.cell, parent=msg.request.parent)
         self.cells.append(cell)
         self._index[cell.name] = cell
 
-    @update.register(response.DidUpdateCell)
+    @update.register(DidUpdateCell)
     def _(self, msg):
         cell = self.cell(msg.request.cell)
         cell.code = msg.request.code
 
-    @update.register(output.Stdout)
+    @update.register(Stdout)
     def _(self, msg):
         cell = self.cell(msg.cell)
         result = Output(type="text", data=msg.text)
