@@ -75,7 +75,7 @@ class _Server(object):
     @handle_request.register(CreateCell)
     async def _(self, msg):
         if msg.parent:
-            parent = self.workers[self.cells[msg.parent]]
+            parent = self.workers[self.cells[msg.parent].id]
             worker = Worker(self.config, self.responses.put)
             addr, recv = _socket_address(), Event()
             coro = worker.start_fork(msg, addr, recv)
@@ -94,7 +94,7 @@ class _Server(object):
     @handle_request.register(RunCell)
     async def _(self, msg):
         cell = self.cells[msg.cell]
-        await self.workers[cell].put(msg, cell.source)
+        await self.workers[cell.id].put(msg, cell.source)
 
     @singledispatchmethod
     async def handle_response(self, msg, _):
@@ -105,7 +105,7 @@ class _Server(object):
         cell = Cell(id=msg.request.cell, parent=msg.request.parent)
         self.notebook.cells.append(cell)
         self.cells[cell.id] = cell
-        self.workers[cell] = sender
+        self.workers[cell.id] = sender
         await self.broadcast(msg)
 
     @handle_response.register(DidUpdateCell)
@@ -116,7 +116,7 @@ class _Server(object):
 
     @handle_response.register(Stdout)
     async def _(self, msg, sender):
-        cell = self.workers.inverse[sender]
+        cell = self.cells[self.workers.inverse[sender]]
         msg.cell = cell.id
         out = Output(type="text", data=msg.text)
         cell.outputs.append(out)
