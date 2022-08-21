@@ -12,11 +12,12 @@ from tempfile import gettempdir
 from threading import Thread
 from uuid import uuid4
 
+from bidict import bidict
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
 from mvnb.data.data import Data
-from mvnb.data.notebook import Notebook
+from mvnb.data.notebook import Cell, Notebook, Output
 from mvnb.data.output import Stdout
 from mvnb.data.request import CreateCell, RunCell, UpdateCell
 from mvnb.data.response import DidCreateCell, DidRunCell, DidUpdateCell
@@ -49,6 +50,8 @@ class _Server(object):
     def __init__(self, config):
         self.config = config
         self.users = set()
+        self.cells = {}
+        self.workers = bidict()
         self.notebook = Notebook()
         self.requests = Pipeline(self.handle_request)
         self.responses = Pipeline(self.handle_response)
@@ -72,7 +75,7 @@ class _Server(object):
     @handle_request.register(CreateCell)
     async def _(self, msg):
         if msg.parent:
-            parent = self.notebook.cell(msg.parent).worker
+            parent = self.workers[self.cells[msg.parent]]
             worker = Worker(self.config, self.responses.put)
             addr, recv = _socket_address(), Event()
             coro = worker.start_fork(msg, addr, recv)
@@ -85,31 +88,38 @@ class _Server(object):
 
     @handle_request.register(UpdateCell)
     async def _(self, msg):
-        self.notebook.update(msg)
         res = DidUpdateCell(request=msg)
-        await self.responses.put(res, self)
+        await self.responses.put(res)
 
     @handle_request.register(RunCell)
     async def _(self, msg):
-        cell = self.notebook.cell(msg.cell)
-        await cell.worker.put(msg, cell.source)
+        cell = self.cells[msg.cell]
+        await self.workers[cell].put(msg, cell.source)
 
     @singledispatchmethod
     async def handle_response(self, msg, _):
-        self.notebook.update(msg)
         await self.broadcast(msg)
 
     @handle_response.register(DidCreateCell)
     async def _(self, msg, sender):
-        self.notebook.update(msg)
-        cell = self.notebook.cell(msg.request.cell)
-        cell.worker = sender
+        cell = Cell(name=msg.request.cell, parent=msg.request.parent)
+        self.notebook.cells.append(cell)
+        self.cells[cell.name] = cell
+        self.workers[cell] = sender
+        await self.broadcast(msg)
+
+    @handle_response.register(DidUpdateCell)
+    async def _(self, msg):
+        cell = self.cells[msg.request.cell]
+        cell.source = msg.request.source
         await self.broadcast(msg)
 
     @handle_response.register(Stdout)
     async def _(self, msg, sender):
-        msg.cell = self.notebook.name(sender)
-        self.notebook.update(msg)
+        cell = self.workers.inverse[sender]
+        msg.cell = cell.name
+        out = Output(type="text", data=msg.text)
+        cell.outputs.append(out)
         await self.broadcast(msg)
 
     async def broadcast(self, msg):

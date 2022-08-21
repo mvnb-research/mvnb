@@ -1,55 +1,14 @@
-from functools import singledispatchmethod
-
 from mvnb.data.data import Data
-from mvnb.data.output import Stdout
-from mvnb.data.response import DidCreateCell, DidUpdateCell
 from mvnb.util.record import field
 
 
 class Notebook(Data):
-    def __init__(self, **values):
-        super().__init__(**values)
-        self._index = {}
-
     @field
     def cells(self, raw):
         return raw or []
 
-    def cell(self, name):
-        return self._index.get(name)
-
-    def name(self, worker):
-        for c in self.cells:
-            if c.worker is worker:
-                return c.name
-
-    @singledispatchmethod
-    def update(self, _):
-        pass
-
-    @update.register(DidCreateCell)
-    def _(self, msg):
-        cell = Cell(name=msg.request.cell, parent=msg.request.parent)
-        self.cells.append(cell)
-        self._index[cell.name] = cell
-
-    @update.register(DidUpdateCell)
-    def _(self, msg):
-        cell = self.cell(msg.request.cell)
-        cell.source = msg.request.source
-
-    @update.register(Stdout)
-    def _(self, msg):
-        cell = self.cell(msg.cell)
-        result = Output(type="text", data=msg.text)
-        cell.outputs.append(result)
-
 
 class Cell(Data):
-    def __init__(self, **values):
-        super().__init__(**values)
-        self.worker = None
-
     @field
     def name(self, raw):
         return raw
