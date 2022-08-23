@@ -1,5 +1,5 @@
 {
-  "source": "mvnb/gui/index.html",
+  "source": "mvnb-gui/index.html",
   "devDependencies": {
     "parcel": "^2.7.0"
   }
