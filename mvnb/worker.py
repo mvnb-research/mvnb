@@ -25,10 +25,10 @@ class Worker(object):
         self._pid = None
         self._requests = Queue(self._handle_request)
 
-    async def start_root(self, request, command):
+    async def start_root(self, request):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
-            self._pid = _popen(command, fd2)
+            self._pid = _popen(self._config.repl, fd2)
         await self._start(request)
 
     async def start_fork(self, request, address, event):
