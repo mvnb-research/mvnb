@@ -5,7 +5,7 @@ from mvnb.util.record import Record, field
 
 
 def test_no_help(capsys_test):
-    parser = Parser("foo")
+    parser = Parser("foo", Record)
 
     run(parser, "--help")
     capsys_test(
@@ -17,7 +17,7 @@ foo: error: unrecognized arguments: --help
 
 
 def test_no_abbrev(capsys_test):
-    parser = Parser("foo")
+    parser = Parser("foo", Record)
     parser.add_argument("--foo")
 
     run(parser, "-f", "foo")
@@ -30,7 +30,7 @@ foo: error: unrecognized arguments: -f foo
 
 
 def test_help_width(capsys_test):
-    parser = Parser("foo")
+    parser = Parser("foo", Record)
     parser.add_argument(
         "--help",
         action="help",
@@ -58,8 +58,7 @@ def test_option(capsys_test):
         def foo(self, _):
             pass
 
-    parser = Parser("foo")
-    parser.add_arguments(Foo)
+    parser = Parser("foo", Foo)
     parser.add_argument("--help", action="help")
 
     run(parser, "--help")
@@ -80,8 +79,7 @@ def test_ignore_non_option_field(capsys_test):
         def bar(self, _):
             pass
 
-    parser = Parser("foo")
-    parser.add_arguments(Foo)
+    parser = Parser("foo", Foo)
     parser.add_argument("--help", action="help")
 
     run(parser, "--help")
@@ -102,8 +100,7 @@ def test_option_alternative(capsys_test):
         def foo(self, _):
             pass
 
-    parser = Parser("foo")
-    parser.add_arguments(Foo)
+    parser = Parser("foo", Foo)
     parser.add_argument("--help", action="help")
 
     run(parser, "--help")
@@ -133,8 +130,7 @@ def test_group(capsys_test):
         def baz(self, _):
             pass
 
-    parser = Parser("foo")
-    parser.add_arguments(Foo)
+    parser = Parser("foo", Foo)
     parser.add_argument("--help", action="help")
 
     run(parser, "--help")
@@ -158,9 +154,7 @@ def test_parse():
         def foo(self, _):
             pass
 
-    parser = Parser("foo")
-    parser.add_arguments(Foo)
-
+    parser = Parser("foo", Foo)
     assert parser.parse([]) == {}
     assert parser.parse(["--foo", "1"]) == {"foo": "1"}
 

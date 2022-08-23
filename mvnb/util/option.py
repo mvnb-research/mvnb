@@ -6,23 +6,20 @@ from mvnb.util.record import field
 
 
 class Parser(ArgumentParser):
-    def __init__(self, prog):
+    def __init__(self, prog, rec):
         super().__init__(
             prog=prog,
             add_help=False,
             allow_abbrev=False,
             formatter_class=_HelpFormatter,
         )
+        for f in rec.fields:
+            if isinstance(f, option):
+                self.add_argument(f)
 
     def parse(self, args):
         ns = self.parse_args(args)
         return {k: v for k, v in vars(ns).items() if v is not _unset}
-
-    def add_arguments(self, cls):
-        for f in cls.fields:
-            if isinstance(f, option):
-                self.add_argument(f)
-        return self
 
 
 class option(field):
@@ -89,12 +86,12 @@ def _(self, opt):
     if not hasattr(self, _groups):
         setattr(self, _groups, {})
     if grp := opt._group:
-        title = grp._args[0] if grp._args else grp._kwargs.get("title")
-        if title not in self._groups:
-            args, kwargs = grp._args[1:], grp._kwargs
-            g = self.add_argument_group(title, *args, **kwargs)
-            self._groups[title] = g
-        return self._groups[title]
+        t = grp._kwargs.get("title", grp._args[0])
+        if t not in self._groups:
+            a, k = grp._args[1:], grp._kwargs
+            g = self.add_argument_group(t, *a, **k)
+            self._groups[t] = g
+        return self._groups[t]
     return self
 
 
