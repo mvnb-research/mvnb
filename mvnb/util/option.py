@@ -22,6 +22,7 @@ class Parser(ArgumentParser):
         for f in cls.fields:
             if isinstance(f, option):
                 self.add_argument(f)
+        return self
 
 
 class option(field):

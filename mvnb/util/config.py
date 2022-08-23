@@ -6,8 +6,8 @@ from shlex import split
 from sys import executable
 
 from mvnb.server import _bootstrap
-from mvnb.util._record import Record
-from mvnb.util.option import group, option
+from mvnb.util.option import Parser, group, option
+from mvnb.util.record import Record
 
 _package = __package__.split(".")[0]
 
@@ -16,7 +16,7 @@ _version = version(_package)
 _config_file = Path(f"{_package}.json")
 
 
-class Config(Record, prog=_package, group=object()):
+class Config(Record):
 
     meta = group("meta options")
 
@@ -63,7 +63,8 @@ class Config(Record, prog=_package, group=object()):
 
     @classmethod
     def from_args(cls, args):
-        config = super(Config, cls).from_args(args)
+        parser = Parser(_package).add_arguments(cls)
+        config = Config(**parser.parse(args))
         config._load_config_file()
         return config
 
