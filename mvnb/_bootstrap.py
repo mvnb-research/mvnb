@@ -1,4 +1,4 @@
-def __mvnb_fork(addr):
+def __fork(addr):
     from multiprocessing.reduction import sendfds
     from os import close, dup2, fork, getpid, openpty
     from socket import AF_UNIX, SOCK_STREAM, socket
@@ -22,7 +22,7 @@ def __mvnb_fork(addr):
     close(fd2)
 
 
-def __mvnb_callback(endpoint, msg):
+def __callback(endpoint, msg):
     from urllib.request import Request, urlopen
 
     data = msg.encode("utf8")

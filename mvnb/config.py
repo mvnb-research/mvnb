@@ -33,11 +33,11 @@ class Config(Record):
 
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
-        return raw or "__mvnb_fork('__address__')"
+        return raw or "__fork('__address__')"
 
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
-        return raw or "__mvnb_callback('__url__', '__message__')"
+        return raw or "__callback('__url__', '__message__')"
 
 
 _package = __package__.split(".")[0]
