@@ -15,9 +15,9 @@ class MessageHandler(WebSocketHandler):
     def on_close(self):
         self._users.remove(self)
 
-    async def on_message(self, msg):
-        msg = Data.from_json(msg)
-        await self._requests.put(msg)
+    async def on_message(self, message):
+        data = Data.from_json(message)
+        await self._requests.put(data)
 
 
 class CallbackHandler(RequestHandler):
@@ -25,5 +25,5 @@ class CallbackHandler(RequestHandler):
         self._func = func
 
     async def post(self):
-        msg = Data.from_json(self.request.body)
-        await self._func(msg)
+        message = Data.from_json(self.request.body)
+        await self._func(message)

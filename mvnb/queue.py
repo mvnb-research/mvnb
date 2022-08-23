@@ -10,10 +10,10 @@ class Queue(object):
     def start(self):
         return create_task(self._watch())
 
-    async def put(self, msg, *args):
-        await self._queue.put((msg, args))
+    async def put(self, message, *args):
+        await self._queue.put((message, args))
 
     async def _watch(self):
         while True:
-            msg, args = await self._queue.get()
-            await self._func(msg, *args)
+            message, args = await self._queue.get()
+            await self._func(message, *args)

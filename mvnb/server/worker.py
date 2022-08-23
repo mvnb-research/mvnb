@@ -24,25 +24,25 @@ class Worker(object):
         self._pid = None
         self._requests = Queue(self._handle_request)
 
-    async def start_root(self, msg, cmd):
+    async def start_root(self, message, cmd):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
             self._pid = _popen(cmd, fd2)
         self._start()
-        res = DidCreateCell(request=msg)
+        res = DidCreateCell(request=message)
         await self._response(res, self)
 
-    async def start_fork(self, msg, addr, recv):
+    async def start_fork(self, message, addr, recv):
         with _connect(addr) as sock:
             recv.set()
             self._fd = await _recv_fd(sock)
             self._pid = await _recv_pid(sock)
         self._start()
-        res = DidCreateCell(request=msg)
+        res = DidCreateCell(request=message)
         await self._response(res, self)
 
-    async def put(self, msg, *args):
-        await self._requests.put(msg, *args)
+    async def put(self, message, *args):
+        await self._requests.put(message, *args)
 
     def _start(self):
         get_event_loop().add_reader(self._fd, self._read_callback)
@@ -63,11 +63,11 @@ class Worker(object):
         self._write(fork)
 
     @_handle_request.register(RunCell)
-    async def _(self, msg, code):
+    async def _(self, message, code):
         url = f"http://{self._config.addr}:{self._config.port}/callback"
         callback = self._config.callback
         callback = callback.replace("__url__", url)
-        callback = callback.replace("__message__", msg.to_json())
+        callback = callback.replace("__message__", message.to_json())
         self._write(f"{code}\n{callback}")
 
     def _write(self, text):

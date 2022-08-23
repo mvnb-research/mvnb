@@ -33,8 +33,8 @@ class _Server(object):
         res = self.responses.start()
         await wait([req, res], return_when=FIRST_COMPLETED)
 
-    async def on_callback(self, msg):
-        res = DidRunCell(request=msg)
+    async def on_callback(self, message):
+        res = DidRunCell(request=message)
         await self.broadcast(res)
 
     @singledispatchmethod
@@ -42,57 +42,57 @@ class _Server(object):
         pass
 
     @handle_request.register(CreateCell)
-    async def _(self, msg):
-        if msg.parent:
-            parent = self.workers[self.cells[msg.parent].id]
+    async def _(self, message):
+        if message.parent:
+            parent = self.workers[self.cells[message.parent].id]
             worker = Worker(self.config, self.responses.put)
             addr, recv = _socket_address(), Event()
-            coro = worker.start_fork(msg, addr, recv)
+            coro = worker.start_fork(message, addr, recv)
             create_task(coro)
             await recv.wait()
-            await parent.put(msg, addr)
+            await parent.put(message, addr)
         else:
             worker = Worker(self.config, self.responses.put)
-            await worker.start_root(msg, self.config.repl)
+            await worker.start_root(message, self.config.repl)
 
     @handle_request.register(UpdateCell)
-    async def _(self, msg):
-        res = DidUpdateCell(request=msg)
+    async def _(self, message):
+        res = DidUpdateCell(request=message)
         await self.responses.put(res)
 
     @handle_request.register(RunCell)
-    async def _(self, msg):
-        cell = self.cells[msg.cell]
-        await self.workers[cell.id].put(msg, cell.source)
+    async def _(self, message):
+        cell = self.cells[message.cell]
+        await self.workers[cell.id].put(message, cell.source)
 
     @singledispatchmethod
-    async def handle_response(self, msg, _):
-        await self.broadcast(msg)
+    async def handle_response(self, message, _):
+        await self.broadcast(message)
 
     @handle_response.register(DidCreateCell)
-    async def _(self, msg, sender):
-        cell = Cell(id=msg.request.cell, parent=msg.request.parent)
+    async def _(self, message, sender):
+        cell = Cell(id=message.request.cell, parent=message.request.parent)
         self.notebook.cells.append(cell)
         self.cells[cell.id] = cell
         self.workers[cell.id] = sender
-        await self.broadcast(msg)
+        await self.broadcast(message)
 
     @handle_response.register(DidUpdateCell)
-    async def _(self, msg):
-        cell = self.cells[msg.request.cell]
-        cell.source = msg.request.source
-        await self.broadcast(msg)
+    async def _(self, message):
+        cell = self.cells[message.request.cell]
+        cell.source = message.request.source
+        await self.broadcast(message)
 
     @handle_response.register(Stdout)
-    async def _(self, msg, sender):
+    async def _(self, message, sender):
         cell = self.cells[self.workers.inverse[sender]]
-        msg.cell = cell.id
-        out = Output(type="text", data=msg.text)
+        message.cell = cell.id
+        out = Output(type="text", data=message.text)
         cell.outputs.append(out)
-        await self.broadcast(msg)
+        await self.broadcast(message)
 
-    async def broadcast(self, msg):
-        txt = msg.to_json()
+    async def broadcast(self, message):
+        txt = message.to_json()
         for usr in self.users:
             await usr.write_message(txt)
 

@@ -22,10 +22,10 @@ def __fork(addr):
     close(fd2)
 
 
-def __callback(endpoint, msg):
+def __callback(endpoint, message):
     from urllib.request import Request, urlopen
 
-    data = msg.encode("utf8")
+    data = message.encode("utf8")
     head = {"content-type": "application/json"}
     args = dict(data=data, headers=head, method="POST")
     urlopen(Request(endpoint, **args))
