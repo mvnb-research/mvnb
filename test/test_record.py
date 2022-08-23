@@ -1,6 +1,6 @@
 from random import random
 
-from mvnb.util.record import Record, field
+from mvnb.record import Record, field
 
 
 def test_get_field():

@@ -3,7 +3,7 @@ from json import dumps, loads
 
 from bidict import bidict
 
-from mvnb.util.record import Record
+from mvnb.record import Record
 
 
 class Data(Record):

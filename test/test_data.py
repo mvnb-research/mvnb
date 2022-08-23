@@ -1,10 +1,10 @@
 from json import dumps, loads
 
-from mvnb.data.data import Data
-from mvnb.data.notebook import Cell, Notebook, Output
-from mvnb.data.output import Stderr, Stdout
-from mvnb.data.request import CreateCell, RunCell, UpdateCell
-from mvnb.data.response import DidCreateCell, DidRunCell, DidUpdateCell
+from mvnb.data import Data
+from mvnb.notebook import Cell, Notebook, Output
+from mvnb.output import Stderr, Stdout
+from mvnb.request import CreateCell, RunCell, UpdateCell
+from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 
 
 def test_notebook_default_fields():
