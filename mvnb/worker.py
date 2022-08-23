@@ -91,7 +91,8 @@ def _openpty():
 
 
 def _popen(args, fd):
-    return Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True).pid
+    proc = Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True)
+    return proc.pid
 
 
 @contextmanager
@@ -110,8 +111,7 @@ def _connect(addr):
 async def _recv_fd(sock):
     s = await _accept(sock)
     s = _select_read(s)
-    f = recvfds(s, 1)[0]
-    return f
+    return recvfds(s, 1)[0]
 
 
 async def _recv_pid(sock):
