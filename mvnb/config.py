@@ -13,7 +13,7 @@ class Config(Record):
 
     @option(help="show help", action="help")
     def help(self, _):
-        pass
+        pass  # pragma: no cover
 
     @option(help="show version", action="version")
     def version(self, _):
