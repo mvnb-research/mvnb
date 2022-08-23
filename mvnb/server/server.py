@@ -1,21 +1,11 @@
-from asyncio import (
-    FIRST_COMPLETED,
-    Event,
-    create_task,
-    new_event_loop,
-    run,
-    set_event_loop,
-    wait,
-)
+from asyncio import FIRST_COMPLETED, Event, create_task, wait
 from functools import singledispatchmethod
 from tempfile import gettempdir
-from threading import Thread
 from uuid import uuid4
 
 from bidict import bidict
 from tornado.web import Application
 
-from mvnb.config import Config
 from mvnb.handler import CallbackHandler, MessageHandler
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
@@ -23,26 +13,6 @@ from mvnb.queue import Queue
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server.worker import Worker
-
-
-def main(args=None):
-    config = Config(args)
-    server = _Server(config)
-    try:
-        run(server.start())
-    except KeyboardInterrupt:
-        pass
-
-
-def start(config):
-    args = config, new_event_loop()
-    Thread(target=_start, args=args, daemon=True).start()
-
-
-def _start(config, loop):
-    set_event_loop(loop)
-    server = _Server(config)
-    loop.run_until_complete(server.start())
 
 
 class _Server(object):
