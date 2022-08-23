@@ -64,7 +64,7 @@ class Worker(object):
 
     @_handle_request.register(RunCell)
     async def _(self, msg, code):
-        url = f"http://{self._config.address}:{self._config.port}/callback"
+        url = f"http://{self._config.addr}:{self._config.port}/callback"
         callback = self._config.callback
         callback = callback.replace("__url__", url)
         callback = callback.replace("__message__", msg.to_json())

@@ -139,7 +139,7 @@ class _Application(Application):
         )
 
     def listen(self):
-        super().listen(address=self.config.address, port=self.config.port)
+        super().listen(address=self.config.addr, port=self.config.port)
 
 
 class _Handler(WebSocketHandler):
