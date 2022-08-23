@@ -13,11 +13,10 @@ from threading import Thread
 from uuid import uuid4
 
 from bidict import bidict
-from tornado.web import Application, RequestHandler
-from tornado.websocket import WebSocketHandler
+from tornado.web import Application
 
 from mvnb.config import Config
-from mvnb.data import Data
+from mvnb.handler import CallbackHandler, MessageHandler
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
 from mvnb.queue import Queue
@@ -129,42 +128,17 @@ class _Server(object):
 
 
 class _Application(Application):
-    def __init__(self, config, users, requests, on_callback):
+    def __init__(self, config, users, requests, callback):
         self.config = config
         super().__init__(
             [
-                (r"/", _Handler, dict(users=users, requests=requests)),
-                (r"/callback", _WorkerHandler, dict(on_callback=on_callback)),
+                (r"/", MessageHandler, dict(users=users, requests=requests)),
+                (r"/callback", CallbackHandler, dict(func=callback)),
             ]
         )
 
     def listen(self):
         super().listen(address=self.config.addr, port=self.config.port)
-
-
-class _Handler(WebSocketHandler):
-    def initialize(self, users, requests):
-        self.users = users
-        self.requests = requests
-
-    def open(self):
-        self.users.add(self)
-
-    def on_close(self):
-        self.users.remove(self)
-
-    async def on_message(self, msg):
-        msg = Data.from_json(msg)
-        await self.requests.put(msg)
-
-
-class _WorkerHandler(RequestHandler):
-    def initialize(self, on_callback):
-        self._on_callback = on_callback
-
-    async def post(self):
-        msg = Data.from_json(self.request.body)
-        await self._on_callback(msg)
 
 
 def _socket_address():
