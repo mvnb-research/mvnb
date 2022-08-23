@@ -9,9 +9,6 @@ class Pipeline(object):
     def start(self):
         return create_task(self._watch())
 
-    async def wait(self):
-        pass
-
     async def put(self, msg, *args):
         await self._queue.put((msg, args))
 
