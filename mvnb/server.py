@@ -52,16 +52,22 @@ class Server(Application):
     @_handle_request.register(CreateCell)
     async def _(self, message):
         if message.parent:
-            parent = self._workers[self._cells[message.parent].id]
-            worker = Worker(self._config, self._responses.put)
-            addr, recv = _socket_address(), Event()
-            coro = worker.start_fork(message, addr, recv)
-            create_task(coro)
-            await recv.wait()
-            await parent.put(message, addr)
+            await self._create_cell(message)
         else:
-            worker = Worker(self._config, self._responses.put)
-            await worker.start_root(message, self._config.repl)
+            await self._fork_cell(message)
+
+    async def _create_cell(self, message):
+        parent = self._workers[self._cells[message.parent].id]
+        worker = Worker(self._config, self._responses.put)
+        addr, recv = _socket_address(), Event()
+        coro = worker.start_fork(message, addr, recv)
+        create_task(coro)
+        await recv.wait()
+        await parent.put(message, addr)
+
+    async def _fork_cell(self, message):
+        worker = Worker(self._config, self._responses.put)
+        await worker.start_root(message, self._config.repl)
 
     @_handle_request.register(UpdateCell)
     async def _(self, message):
