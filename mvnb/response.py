@@ -1,5 +1,5 @@
-from mvnb.data.data import Data
-from mvnb.util.record import field
+from mvnb.data import Data
+from mvnb.record import field
 
 
 class Response(Data, abst=True):

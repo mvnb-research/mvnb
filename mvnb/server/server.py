@@ -16,11 +16,11 @@ from bidict import bidict
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
-from mvnb.data.data import Data
-from mvnb.data.notebook import Cell, Notebook, Output
-from mvnb.data.output import Stdout
-from mvnb.data.request import CreateCell, RunCell, UpdateCell
-from mvnb.data.response import DidCreateCell, DidRunCell, DidUpdateCell
+from mvnb.data import Data
+from mvnb.notebook import Cell, Notebook, Output
+from mvnb.output import Stdout
+from mvnb.request import CreateCell, RunCell, UpdateCell
+from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server.config import Config
 from mvnb.server.pipeline import Pipeline
 from mvnb.server.worker import Worker

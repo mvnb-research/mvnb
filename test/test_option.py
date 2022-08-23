@@ -1,7 +1,7 @@
 from pytest import raises
 
-from mvnb.util.option import Parser, group, option
-from mvnb.util.record import Record, field
+from mvnb.option import Parser, group, option
+from mvnb.record import Record, field
 
 
 def test_no_help(capsys_test):

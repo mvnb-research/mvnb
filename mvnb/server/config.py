@@ -5,9 +5,9 @@ from re import compile
 from shlex import split
 from sys import executable
 
+from mvnb.option import Parser, group, option
+from mvnb.record import Record
 from mvnb.server import _bootstrap
-from mvnb.util.option import Parser, group, option
-from mvnb.util.record import Record
 
 _package = __package__.split(".")[0]
 
