@@ -6,13 +6,13 @@ from uuid import uuid4
 from bidict import bidict
 from tornado.web import Application
 
-from mvnb._server.worker import Worker
 from mvnb.handler import CallbackHandler, MessageHandler
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
 from mvnb.queue import Queue
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
+from mvnb.worker import Worker
 
 
 class Server(Application):
