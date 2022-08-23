@@ -1,6 +1,6 @@
 from pytest import raises
 
-from mvnb.option import Parser, group, option
+from mvnb.option import Parser, option
 from mvnb.record import Record, field
 
 
@@ -116,36 +116,15 @@ options:
     )
 
 
-def test_group(capsys_test):
+def test_version(capsys_test):
     class Foo(Record):
-        foo = group("foo options")
-
-        @foo
-        @option(help="bar value")
-        def bar(self, _):
-            pass
-
-        @foo
-        @option(help="baz value")
-        def baz(self, _):
-            pass
+        @option(action="version")
+        def version(self, _):
+            return "foo"
 
     parser = Parser("foo", Foo)
-    parser.add_argument("--help", action="help")
-
-    run(parser, "--help")
-    capsys_test(
-        """
-usage: foo [--bar BAR] [--baz BAZ] [--help]
-
-options:
-  --help
-
-foo options:
-  --bar BAR  bar value
-  --baz BAZ  baz value
-"""
-    )
+    run(parser, "--version")
+    capsys_test("foo\n")
 
 
 def test_parse():

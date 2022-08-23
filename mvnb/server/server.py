@@ -16,18 +16,18 @@ from bidict import bidict
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
 
+from mvnb.config import Config
 from mvnb.data import Data
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
-from mvnb.server.config import Config
 from mvnb.server.pipeline import Pipeline
 from mvnb.server.worker import Worker
 
 
 def main(args=None):
-    config = Config.from_args(args)
+    config = Config(args)
     server = _Server(config)
     try:
         run(server.start())
