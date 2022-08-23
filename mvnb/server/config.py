@@ -63,7 +63,7 @@ class Config(Record):
 
     @classmethod
     def from_args(cls, args):
-        parser = Parser(_package).add_arguments(cls)
+        parser = Parser(_package, cls)
         config = Config(**parser.parse(args))
         config._load_config_file()
         return config
