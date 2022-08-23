@@ -33,11 +33,23 @@ class Config(Record):
 
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
-        return raw or "__fork('__address__')"
+        return raw or f"__fork('{self.fork_addr}')"
 
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
-        return raw or "__callback('__url__', '__message__')"
+        return raw or f"__callback('{self.callback_url}', '{self.callback_message}')"
+
+    @option(help="fork address placeholder", metavar="<text>")
+    def fork_addr(self, raw):
+        return raw or "__address__"
+
+    @option(help="callback url placeholder", metavar="<text>")
+    def callback_url(self, raw):
+        return raw or "__url__"
+
+    @option(help="callback message placeholder", metavar="<text>")
+    def callback_message(self, raw):
+        return raw or "__message__"
 
 
 _package = __package__.split(".")[0]

@@ -5,6 +5,9 @@ from mvnb.data import Data
 
 
 class MessageHandler(WebSocketHandler):
+
+    path = r"/message"
+
     def initialize(self, users, requests):
         self._users = users
         self._requests = requests
@@ -21,6 +24,9 @@ class MessageHandler(WebSocketHandler):
 
 
 class CallbackHandler(RequestHandler):
+
+    path = r"/callback"
+
     def initialize(self, func):
         self._func = func
 

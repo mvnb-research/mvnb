@@ -38,12 +38,12 @@ class Server(Application):
     @property
     def _message_handler(self):
         args = dict(users=self._users, requests=self._requests)
-        return r"/message", MessageHandler, args
+        return MessageHandler.path, MessageHandler, args
 
     @property
     def _callback_handler(self):
         args = dict(func=self._callback)
-        return r"/callback", CallbackHandler, args
+        return CallbackHandler.path, CallbackHandler, args
 
     @singledispatchmethod
     async def _handle_request(self, _):
