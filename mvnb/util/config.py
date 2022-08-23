@@ -6,7 +6,8 @@ from shlex import split
 from sys import executable
 
 from mvnb.server import _bootstrap
-from mvnb.util._record import Record, group, option
+from mvnb.util._record import Record
+from mvnb.util.option import group, option
 
 _package = __package__.split(".")[0]
 
@@ -44,26 +45,6 @@ class Config(Record, prog=_package, group=object()):
     def prompt(self, raw):
         pat = raw or r"^((>>> )|(\.\.\. ))$"
         return compile(pat.encode())
-
-    @option(help="command prefix pattern", metavar="<regex>")
-    def command_prefix(self, raw):
-        return compile(raw or r"^#\s*>")
-
-    @option(help="command suffix pattern", metavar="<regex>")
-    def command_suffix(self, raw):
-        return compile(raw or r"-+$")
-
-    @option(help="code end pattern", metavar="<regex>")
-    def code_end(self, raw):
-        return compile(raw or r"^#\s*---+\s*$")
-
-    @option(help="path to command history", metavar="<path>")
-    def command_history(self, raw):
-        return Path(raw or "~/.mvnb_command_history").expanduser()
-
-    @option(help="path to code history", metavar="<path>")
-    def code_history(self, raw):
-        return Path(raw or "~/.mvnb_code_history").expanduser()
 
     @meta
     @option(help="show help", action="help")

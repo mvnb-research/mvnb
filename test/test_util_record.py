@@ -74,10 +74,8 @@ def test_get_fields():
 
     fields = list(Foo.fields)
     assert len(fields) == 2
-    assert fields[0][0] is Foo
-    assert fields[0][1] is Foo.foo
-    assert fields[1][0] is Foo
-    assert fields[1][1] is Foo.bar
+    assert fields[0] is Foo.foo
+    assert fields[1] is Foo.bar
 
 
 def test_get_fields_inheritance():
@@ -101,12 +99,9 @@ def test_get_fields_inheritance():
 
     fields = list(Bar.fields)
     assert len(fields) == 3
-    assert fields[0][0] is Foo
-    assert fields[0][1] is Foo.bar
-    assert fields[1][0] is Bar
-    assert fields[1][1] is Bar.foo
-    assert fields[2][0] is Bar
-    assert fields[2][1] is Bar.baz
+    assert fields[0] is Foo.bar
+    assert fields[1] is Bar.foo
+    assert fields[2] is Bar.baz
 
 
 def test_eq():

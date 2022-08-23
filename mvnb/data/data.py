@@ -41,7 +41,7 @@ def _(lst):
 def _(data):
     cls = data.__class__
     dct1 = {_type: _classes.inverse[cls]}
-    dct2 = {f.name: getattr(data, f.name) for _, f in cls.fields}
+    dct2 = {f.name: getattr(data, f.name) for f in cls.fields}
     return {**dct1, **{k: _to_dict(v) for k, v in dct2.items()}}
 
 
@@ -58,7 +58,7 @@ def _(lst):
 @_from_dict.register(dict)
 def _(dct):
     cls = _classes[dct[_type]]
-    dct = {f.name: dct[f.name] for _, f in cls.fields if f.name in dct}
+    dct = {f.name: dct[f.name] for f in cls.fields if f.name in dct}
     return cls(**{k: _from_dict(v) for k, v in dct.items()})
 
 

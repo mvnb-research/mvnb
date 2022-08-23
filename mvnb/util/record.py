@@ -1,4 +1,5 @@
 from functools import cached_property
+from itertools import chain
 
 
 class Record(object):
@@ -8,7 +9,7 @@ class Record(object):
 
     def __eq__(self, rec):
         if rec.__class__ is self.__class__:
-            for _, f in self.fields:
+            for f in self.fields:
                 if getattr(self, f.name) != getattr(rec, f.name):
                     return False
             return True
@@ -23,9 +24,7 @@ class Record(object):
                 if k not in ks and isinstance(v, field):
                     fs.setdefault(c, []).append(v)
                     ks.add(k)
-        for c, l in reversed(fs.items()):
-            for e in l:
-                yield c, e
+        return chain(*reversed(fs.values()))
 
 
 class field(object):
