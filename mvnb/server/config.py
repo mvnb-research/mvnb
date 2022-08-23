@@ -6,7 +6,8 @@ from shlex import split
 from sys import executable
 
 from mvnb.server import _bootstrap
-from mvnb.util._record import Record, group, option
+from mvnb.util.option import Parser, group, option
+from mvnb.util.record import Record
 
 _package = __package__.split(".")[0]
 
@@ -15,7 +16,7 @@ _version = version(_package)
 _config_file = Path(f"{_package}.json")
 
 
-class Config(Record, prog=_package, group=object()):
+class Config(Record):
 
     meta = group("meta options")
 
@@ -45,26 +46,6 @@ class Config(Record, prog=_package, group=object()):
         pat = raw or r"^((>>> )|(\.\.\. ))$"
         return compile(pat.encode())
 
-    @option(help="command prefix pattern", metavar="<regex>")
-    def command_prefix(self, raw):
-        return compile(raw or r"^#\s*>")
-
-    @option(help="command suffix pattern", metavar="<regex>")
-    def command_suffix(self, raw):
-        return compile(raw or r"-+$")
-
-    @option(help="code end pattern", metavar="<regex>")
-    def code_end(self, raw):
-        return compile(raw or r"^#\s*---+\s*$")
-
-    @option(help="path to command history", metavar="<path>")
-    def command_history(self, raw):
-        return Path(raw or "~/.mvnb_command_history").expanduser()
-
-    @option(help="path to code history", metavar="<path>")
-    def code_history(self, raw):
-        return Path(raw or "~/.mvnb_code_history").expanduser()
-
     @meta
     @option(help="show help", action="help")
     def help(self, _):
@@ -82,7 +63,8 @@ class Config(Record, prog=_package, group=object()):
 
     @classmethod
     def from_args(cls, args):
-        config = super(Config, cls).from_args(args)
+        parser = Parser(_package).add_arguments(cls)
+        config = Config(**parser.parse(args))
         config._load_config_file()
         return config
 

@@ -45,7 +45,7 @@ def test_del_field():
 def test_field_cache():
     class Foo(Record):
         @field
-        def foo(self, raw):
+        def foo(self, _):
             return random()
 
     foo = Foo()
@@ -55,7 +55,7 @@ def test_field_cache():
 def test_get_field_object():
     class Foo(Record):
         @field
-        def foo(self, raw):
+        def foo(self, _):
             pass
 
     assert isinstance(Foo.foo, field)
@@ -65,59 +65,40 @@ def test_get_field_object():
 def test_get_fields():
     class Foo(Record):
         @field
-        def foo(self, raw):
+        def foo(self, _):
             pass
 
         @field
-        def bar(self, raw):
+        def bar(self, _):
             pass
 
     fields = list(Foo.fields)
     assert len(fields) == 2
-    assert fields[0][0] is Foo
-    assert fields[0][1] is Foo.foo
-    assert fields[1][0] is Foo
-    assert fields[1][1] is Foo.bar
+    assert fields[0] is Foo.foo
+    assert fields[1] is Foo.bar
 
 
 def test_get_fields_inheritance():
     class Foo(Record):
         @field
-        def foo(self, raw):
+        def foo(self, _):
             pass
 
         @field
-        def bar(self, raw):
+        def bar(self, _):
             pass
 
     class Bar(Foo):
         @field
-        def foo(self, raw):
+        def foo(self, _):
             pass
 
         @field
-        def baz(self, raw):
+        def baz(self, _):
             pass
 
     fields = list(Bar.fields)
     assert len(fields) == 3
-    assert fields[0][0] is Foo
-    assert fields[0][1] is Foo.bar
-    assert fields[1][0] is Bar
-    assert fields[1][1] is Bar.foo
-    assert fields[2][0] is Bar
-    assert fields[2][1] is Bar.baz
-
-
-def test_eq():
-    class Foo(Record):
-        @field
-        def foo(self, raw):
-            return int(raw)
-
-    class Bar(Record):
-        pass
-
-    assert Foo(foo=1) != Bar()
-    assert Foo(foo=1) != Foo(foo=2)
-    assert Foo(foo=1) == Foo(foo=1)
+    assert fields[0] is Foo.bar
+    assert fields[1] is Bar.foo
+    assert fields[2] is Bar.baz

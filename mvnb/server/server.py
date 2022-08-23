@@ -21,9 +21,9 @@ from mvnb.data.notebook import Cell, Notebook, Output
 from mvnb.data.output import Stdout
 from mvnb.data.request import CreateCell, RunCell, UpdateCell
 from mvnb.data.response import DidCreateCell, DidRunCell, DidUpdateCell
+from mvnb.server.config import Config
 from mvnb.server.pipeline import Pipeline
 from mvnb.server.worker import Worker
-from mvnb.util.config import Config
 
 
 def main(args=None):

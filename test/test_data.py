@@ -70,4 +70,13 @@ def test_did_run_cell_default_fields():
 
 def _test(data, dct):
     assert loads(data.to_json()) == dct
-    assert Data.from_json(dumps(dct)) == data
+    assert _data_eq(Data.from_json(dumps(dct)), data)
+
+
+def _data_eq(data1, data2):
+    if data1.__class__ is data2.__class__:
+        for f in data1.fields:
+            if getattr(data1, f.name) != getattr(data2, f.name):
+                return False
+        return True
+    return False
