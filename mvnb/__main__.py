@@ -1,13 +1,13 @@
 from asyncio import run
 
 from mvnb.config import Config
-from mvnb.server.server import _Server
+from mvnb.server import Server
 
 
 def main(args=None):
     try:
         config = Config(args)
-        server = _Server(config)
+        server = Server(config)
         run(server.start())
     except KeyboardInterrupt:
         pass
