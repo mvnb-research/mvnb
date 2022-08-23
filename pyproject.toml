@@ -21,6 +21,7 @@ dependencies = [
   "flake8-black",
   "flake8-tidy-imports",
   "pyproject-flake8",
+  "pytest-asyncio",
   "pytest-cov",
   "pytest-timeout",
 ]
