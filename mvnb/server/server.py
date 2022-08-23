@@ -20,9 +20,9 @@ from mvnb.config import Config
 from mvnb.data import Data
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
+from mvnb.queue import Queue
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
-from mvnb.server.pipeline import Pipeline
 from mvnb.server.worker import Worker
 
 
@@ -53,8 +53,8 @@ class _Server(object):
         self.cells = {}
         self.workers = bidict()
         self.notebook = Notebook()
-        self.requests = Pipeline(self.handle_request)
-        self.responses = Pipeline(self.handle_response)
+        self.requests = Queue(self.handle_request)
+        self.responses = Queue(self.handle_response)
 
     async def start(self):
         app = _Application(self.config, self.users, self.requests, self.on_callback)

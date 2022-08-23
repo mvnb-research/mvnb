@@ -11,9 +11,9 @@ from termios import TCSANOW
 from tty import setraw
 
 from mvnb.output import Stdout
+from mvnb.queue import Queue
 from mvnb.request import CreateCell, RunCell
 from mvnb.response import DidCreateCell
-from mvnb.server.pipeline import Pipeline
 
 
 class Worker(object):
@@ -22,7 +22,7 @@ class Worker(object):
         self._response = response
         self._fd = None
         self._pid = None
-        self._requests = Pipeline(self._handle_request)
+        self._requests = Queue(self._handle_request)
 
     async def start_root(self, msg, cmd):
         with _openpty() as (fd1, fd2):

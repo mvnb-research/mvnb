@@ -1,10 +1,11 @@
-from asyncio import Queue, create_task
+from asyncio import Queue as Queue_
+from asyncio import create_task
 
 
-class Pipeline(object):
-    def __init__(self, on_receive):
-        self._queue = Queue()
-        self._on_receive = on_receive
+class Queue(object):
+    def __init__(self, func):
+        self._queue = Queue_()
+        self._func = func
 
     def start(self):
         return create_task(self._watch())
@@ -15,4 +16,4 @@ class Pipeline(object):
     async def _watch(self):
         while True:
             msg, args = await self._queue.get()
-            await self._on_receive(msg, *args)
+            await self._func(msg, *args)
