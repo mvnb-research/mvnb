@@ -93,7 +93,7 @@ class Worker(object):
 
 
 def _popen(args, fd):
-    proc = Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True)
+    proc = Popen(args, stdin=fd, stdout=fd, stderr=fd)
     return proc.pid
 
 
