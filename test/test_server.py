@@ -7,15 +7,17 @@ from util import data_eq
 
 from mvnb.config import Config
 from mvnb.data import Data
-from mvnb.request import CreateCell
-from mvnb.response import DidCreateCell
+from mvnb.output import Stdout
+from mvnb.request import CreateCell, RunCell, UpdateCell
+from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server import Server
 
 
 @mark.asyncio
 async def test_create_root_cell(client):
     request = CreateCell(cell="foo")
-    response = await client.send(request)
+    await client.send(request)
+    response = await client.recv()
     assert isinstance(response, DidCreateCell)
     assert data_eq(response.request, request)
 
@@ -23,14 +25,59 @@ async def test_create_root_cell(client):
 @mark.asyncio
 async def test_create_fork_cell(client):
     request = CreateCell(cell="foo")
-    response = await client.send(request)
+    await client.send(request)
+    response = await client.recv()
     assert isinstance(response, DidCreateCell)
     assert data_eq(response.request, request)
 
     request = CreateCell(cell="bar", parent="foo")
-    response = await client.send(request)
+    await client.send(request)
+    response = await client.recv()
     assert isinstance(response, DidCreateCell)
     assert data_eq(response.request, request)
+
+
+@mark.asyncio
+async def test_update_cell(client):
+    request = CreateCell(cell="foo")
+    await client.send(request)
+    response = await client.recv()
+    assert isinstance(response, DidCreateCell)
+    assert data_eq(response.request, request)
+
+    request = UpdateCell(cell="foo", source="")
+    await client.send(request)
+    response = await client.recv()
+    assert isinstance(response, DidUpdateCell)
+    assert data_eq(response.request, request)
+
+
+@mark.asyncio
+async def test_run_cell(client):
+    request = CreateCell(cell="foo")
+    await client.send(request)
+    response = await client.recv()
+    assert isinstance(response, DidCreateCell)
+    assert data_eq(response.request, request)
+
+    request = UpdateCell(cell="foo", source="print(1)\n")
+    await client.send(request)
+    response = await client.recv()
+    assert isinstance(response, DidUpdateCell)
+    assert data_eq(response.request, request)
+
+    request = RunCell(cell="foo")
+    await client.send(request)
+    output = ""
+    while True:
+        response = await client.recv()
+        if isinstance(response, DidRunCell):
+            assert data_eq(response.request, request)
+            break
+        else:
+            assert isinstance(response, Stdout)
+            output += response.text
+    assert output == "1\n"
 
 
 @fixture
@@ -65,7 +112,6 @@ class Client(object):
 
     async def send(self, message):
         await self._connection.write_message(message.to_json())
-        return await self.recv()
 
     async def close(self):
         self._connection.close()
