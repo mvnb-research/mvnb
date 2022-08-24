@@ -65,7 +65,7 @@ class Worker(object):
 
     @singledispatchmethod
     async def _handle_request(self, _):
-        raise Exception()
+        raise Exception()  # pragma: no cover
 
     @_handle_request.register(CreateCell)
     async def _(self, _, addr):

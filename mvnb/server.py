@@ -59,7 +59,7 @@ class Server(object):
 
     @singledispatchmethod
     async def _handle_request(self, _):
-        raise Exception()
+        raise Exception()  # pragma: no cover
 
     @_handle_request.register(CreateCell)
     async def _(self, request):
@@ -92,7 +92,7 @@ class Server(object):
 
     @singledispatchmethod
     async def _handle_response(self, response, _):
-        raise Exception()
+        raise Exception()  # pragma: no cover
 
     @_handle_response.register(DidCreateCell)
     async def _(self, response, sender):
