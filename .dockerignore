@@ -1,0 +1,12 @@
+__pycache__
+*.egg-info
+*.pyc
+*.pyd
+*.pyo
+/.coverage
+/.git
+/.parcel-cache
+/.pytest_cache
+/*.egg-info
+/dist
+/node_modules

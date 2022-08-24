@@ -9,7 +9,7 @@ from mvnb.config import Config
 def test_default_values():
     config = Config([])
     assert config.version == "0.0.0"
-    assert config.addr == "localhost"
+    assert config.addr == "0.0.0.0"
     assert config.port == 8000
     assert config.repl == [executable, "-i", _bootstrap.__file__]
     assert config.fork == "__fork('__address__')"

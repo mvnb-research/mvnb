@@ -21,7 +21,7 @@ class Config(Record):
 
     @option(help="server address", metavar="<addr>")
     def addr(self, raw):
-        return raw or "localhost"
+        return raw or "0.0.0.0"
 
     @option(help="server port", metavar="<port>")
     def port(self, raw):

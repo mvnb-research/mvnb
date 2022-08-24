@@ -6,6 +6,10 @@ format:
 check:
 	hatch run check
 
+.PHONY: docker
+docker:
+	docker build -t mvnb .
+
 .PHONY: clean
 clean:
 	hatch env prune
