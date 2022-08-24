@@ -2,9 +2,10 @@ from asyncio import create_task, get_event_loop
 from contextlib import contextmanager
 from functools import singledispatchmethod
 from multiprocessing.reduction import recvfds
-from os import close, openpty, read, unlink, write
+from os import close, kill, openpty, read, unlink, write
 from os.path import exists
 from select import select
+from signal import SIGKILL
 from socket import AF_UNIX, SOCK_STREAM, socket
 from subprocess import Popen
 from termios import TCSANOW
@@ -23,12 +24,14 @@ class Worker(object):
         self._response = response
         self._fd = None
         self._pid = None
+        self._proc = None
         self._requests = Queue(self._handle_request)
 
     async def start_root(self, request):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
-            self._pid = _popen(self._config.repl, fd2)
+            self._proc = _popen(self._config.repl, fd2)
+            self._pid = self._proc.pid
         await self._start(request)
 
     async def start_fork(self, request, address, event):
@@ -40,6 +43,16 @@ class Worker(object):
 
     async def put(self, message, *args):
         await self._requests.put(message, *args)
+
+    def stop(self):
+        if self._proc:
+            self._proc.terminate()
+            self._proc.wait()
+        else:
+            kill(self._pid, SIGKILL)
+        get_event_loop().remove_reader(self._fd)
+        close(self._fd)
+        self._requests.stop()
 
     def _start(self, request):
         self._requests.start()
@@ -93,8 +106,7 @@ class Worker(object):
 
 
 def _popen(args, fd):
-    proc = Popen(args, stdin=fd, stdout=fd, stderr=fd)
-    return proc.pid
+    return Popen(args, stdin=fd, stdout=fd, stderr=fd)
 
 
 @contextmanager
@@ -126,13 +138,17 @@ def _connect(addr):
 async def _recv_fd(sock):
     s = await _accept(sock)
     s = _select_read(s)
-    return recvfds(s, 1)[0]
+    f = recvfds(s, 1)[0]
+    s.close()
+    return f
 
 
 async def _recv_pid(sock):
     s = await _accept(sock)
     s = _select_read(s)
-    return int(s.recv(8))
+    i = int(s.recv(8))
+    s.close()
+    return i
 
 
 async def _accept(sock):

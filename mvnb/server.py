@@ -24,14 +24,23 @@ class Server(object):
         self._notebook = Notebook()
         self._requests = Queue(self._handle_request)
         self._responses = Queue(self._handle_response)
+        self._http = None
 
     async def start(self):
-        self._start_app()
+        self._http = self._start_app()
         await self._start_queues()
+
+    def stop(self):
+        if self._http:
+            self._http.stop()
+        self._requests.stop()
+        self._responses.stop()
+        for worker in self._workers.values():
+            worker.stop()
 
     def _start_app(self):
         app = Application([self._message_handler, self._callback_handler])
-        app.listen(address=self._config.addr, port=self._config.port)
+        return app.listen(address=self._config.addr, port=self._config.port)
 
     def _start_queues(self):
         req = self._requests.start()
