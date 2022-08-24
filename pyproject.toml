@@ -11,8 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mvnb-cui = "mvnb.cui.__main__:main"
-mvnb-server = "mvnb.server.__main__:main"
+mvnb = "mvnb.__main__:main"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -21,6 +20,7 @@ dependencies = [
   "flake8-black",
   "flake8-tidy-imports",
   "pyproject-flake8",
+  "pytest-asyncio",
   "pytest-cov",
   "pytest-timeout",
 ]

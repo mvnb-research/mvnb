@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, HelpFormatter, _ActionsContainer
+from argparse import ArgumentParser, HelpFormatter, _ActionsContainer, _VersionAction
 from functools import singledispatchmethod
 from shutil import get_terminal_size
 
@@ -27,7 +27,6 @@ class option(field):
         super().__init__(None)
         self._args = [args]
         self._kwargs = [kwargs]
-        self._group = None
 
     def __call__(self, obj):
         if isinstance(obj, option):
@@ -36,16 +35,6 @@ class option(field):
             return obj
         self._func = obj
         return self
-
-
-class group(object):
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
-    def __call__(self, opt):
-        opt._group = self
-        return opt
 
 
 class _HelpFormatter(HelpFormatter):
@@ -68,37 +57,15 @@ def _add_argument(self, *args, **kwargs):
 
 @_add_argument.register(option)
 def _(self, opt):
-    grp = self.add_argument_group(opt)
     dct = dict(dest=opt.name, default=_unset)
     for args, kwargs in zip(opt._args, opt._kwargs):
         args = args or [f"--{opt.name}"]
         args = map(lambda s: s.replace("_", "-"), args)
-        grp.add_argument(*args, **{**kwargs, **dct})
-
-
-@singledispatchmethod
-def _add_argument_group(self, *args, **kwargs):
-    return self._add_argument_group(*args, **kwargs)
-
-
-@_add_argument_group.register(option)
-def _(self, opt):
-    if not hasattr(self, _groups):
-        setattr(self, _groups, {})
-    if grp := opt._group:
-        t = grp._kwargs.get("title", grp._args[0])
-        if t not in self._groups:
-            a, k = grp._args[1:], grp._kwargs
-            g = self.add_argument_group(t, *a, **k)
-            self._groups[t] = g
-        return self._groups[t]
-    return self
+        action = self.add_argument(*args, **{**kwargs, **dct})
+        if isinstance(action, _VersionAction):
+            action.version = opt._func(None, None)
 
 
 _patch_actionscontainer(_add_argument)
-
-_patch_actionscontainer(_add_argument_group)
-
-_groups = "_groups"
 
 _unset = object()

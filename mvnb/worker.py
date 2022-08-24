@@ -10,10 +10,11 @@ from subprocess import Popen
 from termios import TCSANOW
 from tty import setraw
 
+from mvnb.handler import CallbackHandler
 from mvnb.output import Stdout
+from mvnb.queue import Queue
 from mvnb.request import CreateCell, RunCell
 from mvnb.response import DidCreateCell
-from mvnb.server.pipeline import Pipeline
 
 
 class Worker(object):
@@ -22,59 +23,78 @@ class Worker(object):
         self._response = response
         self._fd = None
         self._pid = None
-        self._requests = Pipeline(self._handle_request)
+        self._requests = Queue(self._handle_request)
 
-    async def start_root(self, msg, cmd):
+    async def start_root(self, request):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
-            self._pid = _popen(cmd, fd2)
-        self._start()
-        res = DidCreateCell(request=msg)
-        await self._response(res, self)
+            self._pid = _popen(self._config.repl, fd2)
+        await self._start(request)
 
-    async def start_fork(self, msg, addr, recv):
-        with _connect(addr) as sock:
-            recv.set()
+    async def start_fork(self, request, address, event):
+        with _connect(address) as sock:
+            event.set()
             self._fd = await _recv_fd(sock)
             self._pid = await _recv_pid(sock)
-        self._start()
-        res = DidCreateCell(request=msg)
-        await self._response(res, self)
+        await self._start(request)
 
-    async def put(self, msg, *args):
-        await self._requests.put(msg, *args)
+    async def put(self, message, *args):
+        await self._requests.put(message, *args)
 
-    def _start(self):
-        get_event_loop().add_reader(self._fd, self._read_callback)
+    def _start(self, request):
         self._requests.start()
+        get_event_loop().add_reader(self._fd, self._read_callback)
+        return self._reply(DidCreateCell(request=request))
 
     def _read_callback(self):
-        txt = read(self._fd, 1024).decode()
-        create_task(self._response(Stdout(text=txt), self))
+        text = read(self._fd, 1024).decode()
+        create_task(self._reply(Stdout(text=text)))
 
     @singledispatchmethod
     async def _handle_request(self, _):
-        pass
+        raise Exception()
 
     @_handle_request.register(CreateCell)
     async def _(self, _, addr):
-        fork = self._config.fork
-        fork = fork.replace("__address__", addr)
-        self._write(fork)
+        self._write(self._fork_code(addr))
 
     @_handle_request.register(RunCell)
-    async def _(self, msg, code):
-        url = f"http://{self._config.address}:{self._config.port}/callback"
-        callback = self._config.callback
-        callback = callback.replace("__url__", url)
-        callback = callback.replace("__message__", msg.to_json())
-        self._write(f"{code}\n{callback}")
+    async def _(self, message, code):
+        self._write(code)
+        self._write(self._callback_code(message))
+
+    def _fork_code(self, addr):
+        code = self._config.fork
+        code = code.replace(self._config.fork_addr, addr)
+        return code
+
+    def _callback_code(self, message):
+        url = self._callback_url()
+        msg = message.to_json()
+        code = self._config.callback
+        code = code.replace(self._config.callback_url, url)
+        code = code.replace(self._config.callback_message, msg)
+        return code
+
+    def _callback_url(self):
+        addr = self._config.addr
+        port = self._config.port
+        path = CallbackHandler.path
+        return f"http://{addr}:{port}{path}"
 
     def _write(self, text):
         data = f"{text}\n".encode()
         while data:
             if fd := _select_write(self._fd):
                 data = _write(fd, data)
+
+    def _reply(self, message):
+        return self._response(message, self)
+
+
+def _popen(args, fd):
+    proc = Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True)
+    return proc.pid
 
 
 @contextmanager
@@ -88,10 +108,6 @@ def _openpty():
         raise
     finally:
         close(fd2)
-
-
-def _popen(args, fd):
-    return Popen(args, stdin=fd, stdout=fd, stderr=fd, start_new_session=True).pid
 
 
 @contextmanager
@@ -110,8 +126,7 @@ def _connect(addr):
 async def _recv_fd(sock):
     s = await _accept(sock)
     s = _select_read(s)
-    f = recvfds(s, 1)[0]
-    return f
+    return recvfds(s, 1)[0]
 
 
 async def _recv_pid(sock):
@@ -126,11 +141,13 @@ async def _accept(sock):
 
 
 def _select_read(fd):
-    return select((fd,), (), ())[0][0]
+    rlist, _, _ = select((fd,), (), ())
+    return rlist[0]
 
 
 def _select_write(fd):
-    return select((), (fd,), ())[1][0]
+    _, wlist, _ = select((), (fd,), ())
+    return wlist[0]
 
 
 def _write(fd, data):
