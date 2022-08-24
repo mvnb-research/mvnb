@@ -1,5 +1,7 @@
 from json import dumps, loads
 
+from util import data_eq
+
 from mvnb.data import Data
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stderr, Stdout
@@ -70,13 +72,4 @@ def test_did_run_cell_default_fields():
 
 def _test(data, dct):
     assert loads(data.to_json()) == dct
-    assert _data_eq(Data.from_json(dumps(dct)), data)
-
-
-def _data_eq(data1, data2):
-    if data1.__class__ is data2.__class__:
-        for f in data1.fields:
-            if getattr(data1, f.name) != getattr(data2, f.name):
-                return False
-        return True
-    return False
+    assert data_eq(Data.from_json(dumps(dct)), data)
