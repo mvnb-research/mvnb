@@ -1,10 +1,12 @@
 .PHONY: format
 format:
 	hatch run format
+	yarn install && yarn prettier --write mvnb-gui
 
 .PHONY: check
 check:
 	hatch run check
+	yarn install && yarn prettier --check mvnb-gui
 
 .PHONY: docker
 docker:
@@ -22,6 +24,7 @@ clean:
 	rm -rf *.egg-info
 	rm -rf dist
 	rm -rf node_modules
+	find mvnb/gui ! -name '.gitignore' -type f -exec rm -f {} +
 
 .PHONY: vscode
 vscode:

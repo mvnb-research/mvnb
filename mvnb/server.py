@@ -6,7 +6,7 @@ from uuid import uuid4
 from bidict import bidict
 from tornado.web import Application
 
-from mvnb.handler import CallbackHandler, MessageHandler
+from mvnb.handler import CallbackHandler, FileHandler, MessageHandler
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
 from mvnb.queue import Queue
@@ -39,8 +39,13 @@ class Server(object):
             worker.stop()
 
     def _start_app(self):
-        app = Application([self._message_handler, self._callback_handler])
-        return app.listen(address=self._config.addr, port=self._config.port)
+        return Application(
+            [
+                self._message_handler,
+                self._callback_handler,
+                self._file_handler,
+            ]
+        ).listen(address=self._config.addr, port=self._config.port)
 
     def _start_queues(self):
         req = self._requests.start()
@@ -50,12 +55,16 @@ class Server(object):
     @property
     def _message_handler(self):
         args = dict(users=self._users, requests=self._requests)
-        return MessageHandler.path, MessageHandler, args
+        return MessageHandler.PATH, MessageHandler, args
 
     @property
     def _callback_handler(self):
         args = dict(func=self._callback)
-        return CallbackHandler.path, CallbackHandler, args
+        return CallbackHandler.PATH, CallbackHandler, args
+
+    @property
+    def _file_handler(self):
+        return FileHandler.PATH, FileHandler
 
     @singledispatchmethod
     async def _handle_request(self, _):
