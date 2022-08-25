@@ -14,6 +14,7 @@ pflake8 = str(Path(executable).parent / "pflake8")
 
 settings = {
     "coverage-gutters.showLineCoverage": True,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "explorer.excludeGitIgnore": False,
     "python.defaultInterpreterPath": executable,
     "python.linting.flake8Enabled": True,

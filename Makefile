@@ -1,10 +1,12 @@
 .PHONY: format
 format:
 	hatch run format
+	yarn prettier --write mvnb-gui
 
 .PHONY: check
 check:
 	hatch run check
+	yarn prettier --check mvnb-gui
 
 .PHONY: docker
 docker:
