@@ -1,4 +1,6 @@
-from tornado.web import RequestHandler
+from pathlib import Path
+
+from tornado.web import RequestHandler, StaticFileHandler
 from tornado.websocket import WebSocketHandler
 
 from mvnb.data import Data
@@ -6,7 +8,7 @@ from mvnb.data import Data
 
 class MessageHandler(WebSocketHandler):
 
-    path = r"/message"
+    PATH = r"/message"
 
     def initialize(self, users, requests):
         self._users = users
@@ -25,7 +27,7 @@ class MessageHandler(WebSocketHandler):
 
 class CallbackHandler(RequestHandler):
 
-    path = r"/callback"
+    PATH = r"/callback"
 
     def initialize(self, func):
         self._func = func
@@ -33,3 +35,14 @@ class CallbackHandler(RequestHandler):
     async def post(self):
         message = Data.from_json(self.request.body)
         await self._func(message)
+
+
+class FileHandler(StaticFileHandler):
+
+    PATH = r"/(.*)"
+
+    def initialize(self):
+        super().initialize(
+            path=Path(__file__).parent / "gui",
+            default_filename="index.html",
+        )

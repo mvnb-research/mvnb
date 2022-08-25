@@ -92,7 +92,7 @@ class Worker(object):
     def _callback_url(self):
         addr = self._config.addr
         port = self._config.port
-        path = CallbackHandler.path
+        path = CallbackHandler.PATH
         return f"http://{addr}:{port}{path}"
 
     def _write(self, text):
