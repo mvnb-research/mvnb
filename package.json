@@ -1,5 +1,10 @@
 {
   "source": "mvnb-gui/index.html",
+  "targets": {
+    "default": {
+      "distDir": "mvnb/gui"
+    }
+  },
   "devDependencies": {
     "parcel": "^2.7.0"
   }

@@ -22,6 +22,7 @@ clean:
 	rm -rf *.egg-info
 	rm -rf dist
 	rm -rf node_modules
+	find mvnb/gui ! -name '.gitignore' -type f -exec rm -f {} +
 
 .PHONY: vscode
 vscode:
