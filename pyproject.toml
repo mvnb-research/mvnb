@@ -1,49 +1,62 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+build-backend = "pdm.pep517.api"
+requires = ["pdm-pep517>=1.0.0"]
 
 [project]
 name = "mvnb"
 version = "0.0.0"
+requires-python = ">=3.10"
 dependencies = [
-  "bidict>=0.22.0,<0.23.0",
-  "tornado>=6.2.0,<6.3.0",
+  "bidict>=0.22.0",
+  "tornado>=6.2.0",
 ]
 
 [project.scripts]
 mvnb = "mvnb.__main__:main"
 
-[tool.hatch.envs.default]
-dependencies = [
+[tool.pdm.build]
+setup-script = "build.py"
+
+[tool.pdm.dev-dependencies]
+dev = [
+  "flake8",
+  "flake8-black",
+  "flake8-pyproject",
+  "flake8-tidy-imports",
   "black",
   "isort",
-  "flake8-black",
-  "flake8-tidy-imports",
-  "pyproject-flake8",
-  "pytest-asyncio",
+  "pytest",
   "pytest-cov",
+  "pytest-asyncio",
   "pytest-timeout",
 ]
 
-[tool.hatch.envs.default.scripts]
-format = ["format-isort", "format-black"]
-format-isort = "isort script mvnb test"
-format-black = "black --quiet script mvnb test"
+[tool.pdm.scripts.format]
+composite = [
+  "black --quiet build.py mvnb test",
+  "isort build.py mvnb test",
+]
 
-check = ["check-flake8", "check-black", "check-isort", "check-coverage"]
-check-flake8 = "pflake8 script mvnb test"
-check-black = "black --quiet --check script mvnb test"
-check-isort = "isort --check-only script mvnb test"
-check-coverage = "pytest --cov mvnb --cov-report=term --cov-report=xml"
+[tool.pdm.scripts.lint]
+composite = [
+  "flake8 build.py mvnb test",
+  "black --quiet --check build.py mvnb test",
+  "isort --check-only build.py mvnb test",
+]
 
-vscode = "python script/generate-vscode-settings.py"
+[tool.pdm.scripts.test]
+composite = [
+  "pytest --cov --cov-report=term --cov-report=xml"
+]
 
 [tool.coverage.run]
 branch = true
 data_file = ".coverage/.coverage"
+source = ["mvnb"]
 
 [tool.isort]
 profile = "black"
+src_paths = ["mvnb", "test"]
 
 [tool.flake8]
 ban-relative-imports = true

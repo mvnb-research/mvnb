@@ -3,7 +3,6 @@ from asyncio import create_task
 from pytest import mark
 from pytest_asyncio import fixture
 from tornado.websocket import websocket_connect
-from util import data_eq
 
 from mvnb.config import Config
 from mvnb.data import Data
@@ -11,6 +10,7 @@ from mvnb.output import Stdout
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server import Server
+from util import data_eq
 
 
 @mark.asyncio
