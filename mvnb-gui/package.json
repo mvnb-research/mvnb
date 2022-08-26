@@ -1,0 +1,13 @@
+{
+  "source": "index.html",
+  "scripts": {
+    "format": "prettier -w *.html *.tsx *.json",
+    "lint": "prettier -c *.html *.tsx *.json"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "parcel": "^2.7.0",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.2"
+  }
+}
