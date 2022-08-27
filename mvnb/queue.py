@@ -13,12 +13,8 @@ class Queue(object):
         return self._task
 
     def stop(self):
-        for _ in range(self._queue.qsize()):
-            self._queue.get_nowait()
-            self._queue.task_done()
-        if self._task:
-            self._task.cancel()
-            self._task = None
+        self._task.cancel()
+        self._task = None
 
     async def put(self, message, *args):
         await self._queue.put((message, args))

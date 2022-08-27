@@ -31,8 +31,7 @@ class Server(object):
         await self._start_queues()
 
     def stop(self):
-        if self._http:
-            self._http.stop()
+        self._http.stop()
         self._requests.stop()
         self._responses.stop()
         for worker in self._workers.values():

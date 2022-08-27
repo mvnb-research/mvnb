@@ -2,6 +2,7 @@ from asyncio import create_task
 
 from pytest import mark
 from pytest_asyncio import fixture
+from tornado.httpclient import AsyncHTTPClient
 from tornado.websocket import websocket_connect
 from util import data_eq
 
@@ -78,6 +79,14 @@ async def test_run_cell(client):
             assert isinstance(response, Stdout)
             output += response.text
     assert output == "1\n"
+
+
+@mark.asyncio
+async def test_gui(server):
+    client = AsyncHTTPClient()
+    response = await client.fetch("http://localhost:8000/")
+    client.close()
+    assert response.body
 
 
 @fixture
