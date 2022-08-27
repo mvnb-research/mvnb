@@ -115,7 +115,7 @@ def _openpty():
         fd1, fd2 = openpty()
         setraw(fd1, TCSANOW)
         yield fd1, fd2
-    except Exception:
+    except Exception:  # pragma: no cover
         close(fd1)
         raise
     finally:
