@@ -1,11 +1,11 @@
 # Builder
 FROM python:3.10-alpine as builder
 
-RUN apk add yarn && pip install pdm
+RUN apk add make npm
 
 COPY . /src
 
-RUN cd /src && pdm build -v
+RUN cd /src && make build
 
 # Main
 FROM python:3.10-alpine

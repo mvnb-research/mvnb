@@ -3,12 +3,14 @@ __pycache__
 *.pyo
 /.coverage
 /.git
-/.pdm.toml
 /.pytest_cache
 /.venv
-/build
+/.vscode
+/.yarn
 /dist
 /coverage.xml
+/mvnb.egg-info
+/mvnb/gui
 /mvnb-gui/.parcel-cache
 /mvnb-gui/dist
 /mvnb-gui/node_modules
