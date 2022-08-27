@@ -8,8 +8,8 @@ from setuptools import setup
 def build_gui():
     proj = Path(__file__).parent
     gui_proj = proj / "mvnb-gui"
-    gui_dist = gui_proj / "dist"
     gui_dest = proj / "mvnb" / "gui"
+    gui_dist = gui_proj / "dist"
 
     # build only when gui proj exists
     if not gui_proj.exists():
@@ -20,7 +20,7 @@ def build_gui():
 
     # yarn parcel build
     gui_dist.exists() and rmtree(gui_dist)
-    check_call(["yarn", "parcel", "build"], cwd=gui_proj)
+    check_call(["yarn", "build"], cwd=gui_proj)
 
     # deploy gui source
     gui_dest.exists() and rmtree(gui_dest)

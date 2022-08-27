@@ -1,6 +1,7 @@
 {
   "source": "index.html",
   "scripts": {
+    "build": "parcel build",
     "format": "prettier -w *.html *.tsx *.json",
     "lint": "prettier -c *.html *.tsx *.json"
   },
