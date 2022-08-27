@@ -1,9 +1,9 @@
 {
-  "source": "index.html",
+  "source": "src/index.html",
   "scripts": {
     "build": "parcel build",
-    "format": "prettier -w *.html *.tsx *.json",
-    "lint": "prettier -c *.html *.tsx *.json"
+    "format": "prettier -w src/*.html src/*.tsx *.json",
+    "lint": "prettier -c src/*.html src/*.tsx *.json"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
