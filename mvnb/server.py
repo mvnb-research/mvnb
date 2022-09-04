@@ -70,33 +70,33 @@ class Server(object):
         raise Exception()  # pragma: no cover
 
     @_handle_request.register(CreateCell)
-    async def _(self, request):
-        if request.parent:
-            await self._fork_cell(request)
+    async def _(self, req):
+        if req.parent:
+            await self._fork_cell(req)
         else:
-            await self._create_cell(request)
+            await self._create_cell(req)
 
-    async def _create_cell(self, request):
+    async def _create_cell(self, req):
         worker = Worker(self._config, self._responses.put)
-        await worker.start_root(request)
+        await worker.start_root(req)
 
-    async def _fork_cell(self, request):
-        parent = self._workers[request.parent]
+    async def _fork_cell(self, req):
+        parent = self._workers[req.parent]
         worker = Worker(self._config, self._responses.put)
-        address, event = _socket_address(), Event()
-        create_task(worker.start_fork(request, address, event))
+        addr, event = _socket_address(), Event()
+        create_task(worker.start_fork(req, addr, event))
         await event.wait()
-        await parent.put(request, address)
+        await parent.put(req, addr)
 
     @_handle_request.register(UpdateCell)
-    async def _(self, request):
-        response = DidUpdateCell(request=request)
+    async def _(self, req):
+        response = DidUpdateCell(request=req)
         await self._responses.put(response)
 
     @_handle_request.register(RunCell)
-    async def _(self, request):
-        cell = self._cells[request.cell]
-        await self._workers[cell.id].put(request, cell.source)
+    async def _(self, req):
+        cell = self._cells[req.cell]
+        await self._workers[cell.id].put(req, cell.source)
 
     @singledispatchmethod
     async def _handle_response(self, response, _):
@@ -124,12 +124,12 @@ class Server(object):
         cell.outputs.append(output)
         await self._broadcast(response)
 
-    async def _callback(self, message):
-        res = DidRunCell(request=message)
+    async def _callback(self, msg):
+        res = DidRunCell(request=msg)
         await self._broadcast(res)
 
-    async def _broadcast(self, message):
-        json = message.to_json()
+    async def _broadcast(self, msg):
+        json = msg.to_json()
         for user in self._users:
             await user.write_message(json)
 

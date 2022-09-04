@@ -20,8 +20,8 @@ class MessageHandler(WebSocketHandler):
     def on_close(self):
         self._users.remove(self)
 
-    async def on_message(self, message):
-        data = Data.from_json(message)
+    async def on_message(self, msg):
+        data = Data.from_json(msg)
         await self._requests.put(data)
 
 
@@ -33,8 +33,8 @@ class CallbackHandler(RequestHandler):
         self._func = func
 
     async def post(self):
-        message = Data.from_json(self.request.body)
-        await self._func(message)
+        msg = Data.from_json(self.request.body)
+        await self._func(msg)
 
 
 class FileHandler(StaticFileHandler):
