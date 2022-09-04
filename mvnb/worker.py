@@ -27,22 +27,22 @@ class Worker(object):
         self._proc = None
         self._requests = Queue(self._handle_request)
 
-    async def start_root(self, request):
+    async def start_root(self, req):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
             self._proc = _popen(self._config.repl, fd2)
             self._pid = self._proc.pid
-        await self._start(request)
+        await self._start(req)
 
-    async def start_fork(self, request, address, event):
-        with _connect(address) as sock:
+    async def start_fork(self, req, addr, event):
+        with _connect(addr) as sock:
             event.set()
             self._fd = await _recv_fd(sock)
             self._pid = await _recv_pid(sock)
-        await self._start(request)
+        await self._start(req)
 
-    async def put(self, message, *args):
-        await self._requests.put(message, *args)
+    async def put(self, msg, *args):
+        await self._requests.put(msg, *args)
 
     def stop(self):
         if self._proc:
@@ -54,10 +54,10 @@ class Worker(object):
         close(self._fd)
         self._requests.stop()
 
-    def _start(self, request):
+    def _start(self, req):
         self._requests.start()
         get_event_loop().add_reader(self._fd, self._read_callback)
-        return self._reply(DidCreateCell(request=request))
+        return self._reply(DidCreateCell(request=req))
 
     def _read_callback(self):
         text = read(self._fd, 1024).decode()
@@ -72,18 +72,18 @@ class Worker(object):
         self._write(self._fork_code(addr))
 
     @_handle_request.register(RunCell)
-    async def _(self, message, code):
+    async def _(self, msg, code):
         self._write(code)
-        self._write(self._callback_code(message))
+        self._write(self._callback_code(msg))
 
     def _fork_code(self, addr):
         code = self._config.fork
         code = code.replace(self._config.fork_addr, addr)
         return code
 
-    def _callback_code(self, message):
+    def _callback_code(self, msg):
         url = self._callback_url()
-        msg = message.to_json()
+        msg = msg.to_json()
         code = self._config.callback
         code = code.replace(self._config.callback_url, url)
         code = code.replace(self._config.callback_message, msg)
@@ -101,8 +101,8 @@ class Worker(object):
             if fd := _select_write(self._fd):
                 data = _write(fd, data)
 
-    def _reply(self, message):
-        return self._response(message, self)
+    def _reply(self, msg):
+        return self._response(msg, self)
 
 
 def _popen(args, fd):
