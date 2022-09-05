@@ -73,7 +73,11 @@ class Worker(object):
 
     @_handle_request.register(RunCell)
     async def _(self, msg, code):
+        if self._config.before_run:
+            self._write(self._config.before_run)
         self._write(code)
+        if self._config.after_run:
+            self._write(self._config.after_run)
         self._write(self._callback_code(msg))
 
     def _fork_code(self, addr):

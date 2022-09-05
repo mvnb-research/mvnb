@@ -1,4 +1,5 @@
 from importlib.metadata import version
+from pathlib import Path
 from shlex import split
 from sys import executable
 
@@ -31,13 +32,27 @@ class Config(Record):
     def repl(self, raw):
         return split(raw) if raw else [executable, "-i", _bootstrap.__file__]
 
+    @option(help="before-run code", metavar="<code>")
+    def before_run(self, raw):
+        return self._text_or_file(raw)
+
+    @option(help="after-run code", metavar="<code>")
+    def after_run(self, raw):
+        return self._text_or_file(raw)
+
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
-        return raw or f"__fork('{self.fork_addr}')"
+        default = f"__fork('{self.fork_addr}')"
+        return self._text_or_file(raw) or default
 
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
-        return raw or f"__callback('{self.callback_url}', '{self.callback_message}')"
+        default = f"__callback('{self.callback_url}', '{self.callback_message}')"
+        return self._text_or_file(raw) or default
+
+    @option(help="file prefix", metavar="<text>")
+    def file_prefix(self, raw):
+        return raw or "@"
 
     @option(help="fork address placeholder", metavar="<text>")
     def fork_addr(self, raw):
@@ -50,6 +65,14 @@ class Config(Record):
     @option(help="callback message placeholder", metavar="<text>")
     def callback_message(self, raw):
         return raw or "__message__"
+
+    def _text_or_file(self, raw):
+        if raw is None:
+            return None
+        if raw.startswith(self.file_prefix):
+            path = raw[len(self.file_prefix) :]
+            return Path(path).read_text()
+        return raw
 
 
 _package = __package__.split(".")[0]
