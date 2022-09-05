@@ -3,7 +3,7 @@ from pathlib import Path
 from shlex import split
 from sys import executable
 
-from mvnb import _bootstrap
+from mvnb import _bootstrap, _preprocessor
 from mvnb.option import Parser, option
 from mvnb.record import Record
 
@@ -31,6 +31,10 @@ class Config(Record):
     @option(help="repl command", metavar="<repl>")
     def repl(self, raw):
         return split(raw) if raw else [executable, "-i", _bootstrap.__file__]
+
+    @option(help="preprocessor command", metavar="<preproc>")
+    def preproc(self, raw):
+        return split(raw) if raw else [executable, _preprocessor.__file__]
 
     @option(help="before-run code", metavar="<code>")
     def before_run(self, raw):

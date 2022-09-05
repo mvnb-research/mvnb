@@ -7,7 +7,7 @@ from os.path import exists
 from select import select
 from signal import SIGKILL
 from socket import AF_UNIX, SOCK_STREAM, socket
-from subprocess import Popen
+from subprocess import PIPE, Popen
 from termios import TCSANOW
 from tty import setraw
 
@@ -101,6 +101,8 @@ class Worker(object):
 
     def _write(self, text):
         data = f"{text}\n".encode()
+        proc = Popen(self._config.preproc, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        data = proc.communicate(data)[0]
         while data:
             if fd := _select_write(self._fd):
                 data = _write(fd, data)
