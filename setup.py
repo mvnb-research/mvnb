@@ -20,7 +20,7 @@ def build_gui():
 
     # yarn parcel build
     gui_dist.exists() and rmtree(gui_dist)
-    check_call(["yarn", "build"], cwd=gui_proj)
+    check_call(["yarn", "build", "--no-source-maps"], cwd=gui_proj)
 
     # deploy gui source
     gui_dest.exists() and rmtree(gui_dest)
