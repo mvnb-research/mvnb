@@ -50,7 +50,7 @@ test: $(venv)/bin/pytest $(venv)/bin/mvnb
 
 .PHONY: coverage
 coverage: $(venv)/bin/pytest $(venv)/bin/mvnb
-	$(venv)/bin/pytest --cov --cov-report=term --cov-report=xml
+	$(venv)/bin/pytest --cov --cov-report=html --cov-report=term --cov-report=xml
 
 .PHONY: build
 build: $(yarn)/node_modules/.bin/yarn $(venv)/bin/pyproject-build
@@ -87,7 +87,7 @@ clean-test:
 
 .PHONY: clean-coverage
 clean-coverage: clean-test
-	rm -rf .coverage coverage.xml
+	rm -rf .coverage coverage.xml htmlcov
 
 .PHONY: clean-build
 clean-build: clean-gui
