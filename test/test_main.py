@@ -6,7 +6,6 @@ from sys import executable
 from time import sleep
 
 from pytest import fixture, mark
-from pytest_cov.embed import cleanup_on_sigterm
 from tornado.httpclient import AsyncHTTPClient
 
 
@@ -38,9 +37,7 @@ def server(unused_tcp_port):
 localhost = "localhost"
 
 if __name__ == "__main__":
+    from subprocess import check_call
     from sys import argv
 
-    from mvnb.__main__ import main
-
-    cleanup_on_sigterm()
-    main(["--port", argv[1]])
+    check_call([executable, "-m", "mvnb", "--port", argv[1]])
