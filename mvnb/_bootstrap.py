@@ -2,11 +2,8 @@ def __mvnb_fork(addr):
     from multiprocessing.reduction import sendfds
     from os import close, dup2, fork, getpid, openpty
     from socket import AF_UNIX, SOCK_STREAM, socket
-    from termios import TCSANOW
-    from tty import setraw
 
     fd1, fd2 = openpty()
-    setraw(fd1, TCSANOW)
     pid = fork()
     if pid == 0:
         with socket(AF_UNIX, SOCK_STREAM) as sock:
