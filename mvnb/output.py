@@ -1,8 +1,8 @@
-from mvnb.data import Data
+from mvnb.payload import Payload
 from mvnb.record import field
 
 
-class Output(Data, abst=True):
+class Output(Payload, abst=True):
     @field
     def cell(self, raw):
         return raw

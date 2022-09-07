@@ -7,8 +7,8 @@ from tornado.websocket import websocket_connect
 from util import data_eq
 
 from mvnb.config import Config
-from mvnb.data import Data
 from mvnb.output import Stdout
+from mvnb.payload import Payload
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 from mvnb.server import Server
@@ -128,4 +128,4 @@ class Client(object):
 
     async def recv(self):
         text = await self._connection.read_message()
-        return Data.from_json(text) if text else None
+        return Payload.from_json(text) if text else None

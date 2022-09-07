@@ -6,7 +6,7 @@ from bidict import bidict
 from mvnb.record import Record
 
 
-class Data(Record):
+class Payload(Record):
     def __init_subclass__(cls, abst=False):
         if not abst:
             _classes[cls.__name__] = cls
@@ -37,7 +37,7 @@ def _(lst):
     return [_to_dict(e) for e in lst]
 
 
-@_to_dict.register(Data)
+@_to_dict.register(Payload)
 def _(data):
     cls = data.__class__
     dct1 = {_type: _classes.inverse[cls]}

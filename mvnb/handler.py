@@ -3,7 +3,7 @@ from pathlib import Path
 from tornado.web import RequestHandler, StaticFileHandler
 from tornado.websocket import WebSocketHandler
 
-from mvnb.data import Data
+from mvnb.payload import Payload
 
 
 class MessageHandler(WebSocketHandler):
@@ -21,7 +21,7 @@ class MessageHandler(WebSocketHandler):
         self._users.remove(self)
 
     async def on_message(self, msg):
-        data = Data.from_json(msg)
+        data = Payload.from_json(msg)
         await self._requests.put(data)
 
 
@@ -33,7 +33,7 @@ class CallbackHandler(RequestHandler):
         self._func = func
 
     async def post(self):
-        msg = Data.from_json(self.request.body)
+        msg = Payload.from_json(self.request.body)
         await self._func(msg)
 
 

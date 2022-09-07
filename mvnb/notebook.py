@@ -1,14 +1,14 @@
-from mvnb.data import Data
+from mvnb.payload import Payload
 from mvnb.record import field
 
 
-class Notebook(Data):
+class Notebook(Payload):
     @field
     def cells(self, raw):
         return raw or []
 
 
-class Cell(Data):
+class Cell(Payload):
     @field
     def id(self, raw):
         return raw
@@ -26,7 +26,7 @@ class Cell(Data):
         return raw or []
 
 
-class Output(Data):
+class Output(Payload):
     @field
     def type(self, raw):
         return raw
