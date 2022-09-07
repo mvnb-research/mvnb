@@ -1,6 +1,6 @@
 from json import dumps, loads
 
-from util import data_eq
+from util import payload_eq
 
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stderr, Stdout
@@ -70,6 +70,6 @@ def test_did_run_cell_default_fields():
     _test(res, dict(_type="DidRunCell", request=None))
 
 
-def _test(data, dct):
-    assert loads(data.to_json()) == dct
-    assert data_eq(Payload.from_json(dumps(dct)), data)
+def _test(payload, dct):
+    assert loads(payload.to_json()) == dct
+    assert payload_eq(Payload.from_json(dumps(dct)), payload)

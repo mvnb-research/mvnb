@@ -20,10 +20,10 @@ if __name__ == "__main__":
         close(fd1)
         close(fd2)
 
-    def __mvnb_callback(endpoint, msg):
+    def __mvnb_callback(endpoint, payload):
         from urllib.request import Request, urlopen
 
-        data = msg.encode("utf8")
+        data = payload.encode("utf8")
         head = {"content-type": "application/json"}
         args = dict(data=data, headers=head, method="POST")
         urlopen(Request(endpoint, **args))

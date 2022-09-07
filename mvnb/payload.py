@@ -19,8 +19,8 @@ class Payload(Data):
         return _to_json(self)
 
 
-def _to_json(data):
-    return dumps(_to_dict(data), separators=(",", ":"))
+def _to_json(payload):
+    return dumps(_to_dict(payload), separators=(",", ":"))
 
 
 def _from_json(json):
@@ -38,10 +38,10 @@ def _(lst):
 
 
 @_to_dict.register(Payload)
-def _(data):
-    cls = data.__class__
+def _(payload):
+    cls = payload.__class__
     dct1 = {_type: _classes.inverse[cls]}
-    dct2 = {f.name: getattr(data, f.name) for f in cls.fields}
+    dct2 = {f.name: getattr(payload, f.name) for f in cls.fields}
     return {**dct1, **{k: _to_dict(v) for k, v in dct2.items()}}
 
 

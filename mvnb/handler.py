@@ -21,8 +21,8 @@ class MessageHandler(WebSocketHandler):
         self._users.remove(self)
 
     async def on_message(self, msg):
-        data = Payload.from_json(msg)
-        await self._requests.put(data)
+        payload = Payload.from_json(msg)
+        await self._requests.put(payload)
 
 
 class CallbackHandler(RequestHandler):

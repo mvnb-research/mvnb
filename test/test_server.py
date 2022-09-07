@@ -4,7 +4,7 @@ from pytest import mark
 from pytest_asyncio import fixture
 from tornado.httpclient import AsyncHTTPClient
 from tornado.websocket import websocket_connect
-from util import data_eq
+from util import payload_eq
 
 from mvnb.config import Config
 from mvnb.output import Stdout
@@ -20,7 +20,7 @@ async def test_create_root_cell(client):
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidCreateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
 
 @mark.asyncio
@@ -29,13 +29,13 @@ async def test_create_fork_cell(client):
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidCreateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
     request = CreateCell(cell="bar", parent="foo")
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidCreateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
 
 @mark.asyncio
@@ -44,13 +44,13 @@ async def test_update_cell(client):
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidCreateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
     request = UpdateCell(cell="foo", source="")
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidUpdateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
 
 @mark.asyncio
@@ -59,13 +59,13 @@ async def test_run_cell(client):
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidCreateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
     request = UpdateCell(cell="foo", source="print(1)\n")
     await client.send(request)
     response = await client.recv()
     assert isinstance(response, DidUpdateCell)
-    assert data_eq(response.request, request)
+    assert payload_eq(response.request, request)
 
     request = RunCell(cell="foo")
     await client.send(request)
@@ -73,7 +73,7 @@ async def test_run_cell(client):
     while True:
         response = await client.recv()
         if isinstance(response, DidRunCell):
-            assert data_eq(response.request, request)
+            assert payload_eq(response.request, request)
             break
         else:
             assert isinstance(response, Stdout)
