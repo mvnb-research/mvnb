@@ -15,8 +15,8 @@ def test_default_values():
     assert config.repl == [executable, "-i", _bootstrap.__file__]
     assert config.before_run is None
     assert config.after_run is None
-    assert config.fork == "__fork('__address__')"
-    assert config.callback == "__callback('__url__', '__message__')"
+    assert config.fork == "__mvnb_fork('__address__')"
+    assert config.callback == "__mvnb_callback('__url__', '__message__')"
     assert config.fork_addr == "__address__"
     assert config.callback_url == "__url__"
     assert config.callback_message == "__message__"

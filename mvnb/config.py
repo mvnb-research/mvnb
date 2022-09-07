@@ -46,12 +46,12 @@ class Config(Record):
 
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
-        default = f"__fork('{self.fork_addr}')"
+        default = f"__mvnb_fork('{self.fork_addr}')"
         return self._text_or_file(raw) or default
 
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
-        default = f"__callback('{self.callback_url}', '{self.callback_message}')"
+        default = f"__mvnb_callback('{self.callback_url}', '{self.callback_message}')"
         return self._text_or_file(raw) or default
 
     @option(help="file prefix", metavar="<text>")
