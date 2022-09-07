@@ -13,7 +13,7 @@ class Data(object):
         fs, ks = {}, set()
         for c in cls.__mro__:
             for k, v in vars(c).items():
-                if k not in ks and isinstance(v, field):
+                if isinstance(v, field) and k not in ks:
                     fs.setdefault(c, []).append(v)
                     ks.add(k)
         return chain(*reversed(fs.values()))
