@@ -2,7 +2,7 @@ from functools import cached_property
 from itertools import chain
 
 
-class Record(object):
+class Data(object):
     def __init__(self, **raw):
         self._raw = raw
         self._cache = {}

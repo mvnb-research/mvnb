@@ -2,7 +2,7 @@ from argparse import ArgumentParser, HelpFormatter, _ActionsContainer, _VersionA
 from functools import singledispatchmethod
 from shutil import get_terminal_size
 
-from mvnb.record import field
+from mvnb.data import field
 
 
 class Parser(ArgumentParser):

@@ -4,11 +4,11 @@ from shlex import split
 from sys import executable
 
 from mvnb import _bootstrap, _preprocessor
+from mvnb.data import Data
 from mvnb.option import Parser, option
-from mvnb.record import Record
 
 
-class Config(Record):
+class Config(Data):
     def __init__(self, args):
         super().__init__(**_parser.parse(args))
 

@@ -1,7 +1,7 @@
 from uuid import uuid4
 
+from mvnb.data import field
 from mvnb.payload import Payload
-from mvnb.record import field
 
 
 class Request(Payload, abst=True):

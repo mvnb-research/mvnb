@@ -3,10 +3,10 @@ from json import dumps, loads
 
 from bidict import bidict
 
-from mvnb.record import Record
+from mvnb.data import Data
 
 
-class Payload(Record):
+class Payload(Data):
     def __init_subclass__(cls, abst=False):
         if not abst:
             _classes[cls.__name__] = cls

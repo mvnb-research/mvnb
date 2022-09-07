@@ -1,11 +1,11 @@
 from pytest import raises
 
+from mvnb.data import Data, field
 from mvnb.option import Parser, option
-from mvnb.record import Record, field
 
 
 def test_no_help(capsys_test):
-    parser = Parser("foo", Record)
+    parser = Parser("foo", Data)
 
     run(parser, "--help")
     capsys_test(
@@ -17,7 +17,7 @@ foo: error: unrecognized arguments: --help
 
 
 def test_no_abbrev(capsys_test):
-    parser = Parser("foo", Record)
+    parser = Parser("foo", Data)
     parser.add_argument("--foo")
 
     run(parser, "-f", "foo")
@@ -30,7 +30,7 @@ foo: error: unrecognized arguments: -f foo
 
 
 def test_help_width(capsys_test):
-    parser = Parser("foo", Record)
+    parser = Parser("foo", Data)
     parser.add_argument(
         "--help",
         action="help",
@@ -53,7 +53,7 @@ options:
 
 
 def test_option(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @option(help="foo value")
         def foo(self, _):
             pass
@@ -74,7 +74,7 @@ options:
 
 
 def test_ignore_non_option_field(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @field
         def bar(self, _):
             pass
@@ -94,7 +94,7 @@ options:
 
 
 def test_option_alternative(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @option("--bar", help="bar value")
         @option(help="foo value")
         def foo(self, _):
@@ -117,7 +117,7 @@ options:
 
 
 def test_version(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @option(action="version")
         def version(self, _):
             return "foo"
@@ -128,7 +128,7 @@ def test_version(capsys_test):
 
 
 def test_parse():
-    class Foo(Record):
+    class Foo(Data):
         @option(help="foo value")
         def foo(self, _):
             pass

@@ -1,5 +1,5 @@
+from mvnb.data import field
 from mvnb.payload import Payload
-from mvnb.record import field
 
 
 class Notebook(Payload):
