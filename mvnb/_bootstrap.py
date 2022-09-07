@@ -28,9 +28,13 @@ def __mvnb_callback(endpoint, msg):
     urlopen(Request(endpoint, **args))
 
 
-if __name__ == "__main__":
+def __mvnb_init():
     import readline
     import sys
 
     readline.set_auto_history(False)
     sys.ps1 = sys.ps2 = ""
+
+
+if __name__ == "__main__":
+    __mvnb_init()
