@@ -10,7 +10,7 @@ def test_no_help(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo
+usage: foo [options]
 foo: error: unrecognized arguments: --help
 """
     )
@@ -23,7 +23,7 @@ def test_no_abbrev(capsys_test):
     run(parser, "-f", "foo")
     capsys_test(
         """
-usage: foo [--foo FOO]
+usage: foo [options]
 foo: error: unrecognized arguments: -f foo
 """
     )
@@ -43,7 +43,7 @@ def test_help_width(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--help]
+usage: foo [options]
 
 options:
   --help  This very long help message should be wrapped so that every line is at most 88
@@ -64,7 +64,7 @@ def test_option(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--foo FOO] [--help]
+usage: foo [options]
 
 options:
   --foo FOO  foo value
@@ -85,7 +85,7 @@ def test_ignore_non_option_field(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--help]
+usage: foo [options]
 
 options:
   --help
@@ -106,7 +106,7 @@ def test_option_alternative(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--foo FOO] [--bar FOO] [--help]
+usage: foo [options]
 
 options:
   --foo FOO  foo value

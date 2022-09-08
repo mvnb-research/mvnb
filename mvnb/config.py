@@ -28,11 +28,11 @@ class Config(Data):
     def port(self, raw):
         return int(raw or 8000)
 
-    @option(help="repl command", metavar="<repl>")
+    @option(help="repl command", metavar="<cmd>")
     def repl(self, raw):
         return split(raw) if raw else [executable, "-i", _bootstrap.__file__]
 
-    @option(help="preprocessor command", metavar="<preproc>")
+    @option(help="preprocessor command", metavar="<cmd>")
     def preproc(self, raw):
         return split(raw) if raw else [executable, _preprocessor.__file__]
 
@@ -49,18 +49,14 @@ class Config(Data):
         default = f"__mvnb_fork('{self.fork_addr}')"
         return self._text_or_file(raw) or default
 
+    @option(help="fork address placeholder", metavar="<text>")
+    def fork_addr(self, raw):
+        return raw or "__address__"
+
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
         default = f"__mvnb_callback('{self.callback_url}', '{self.callback_payload}')"
         return self._text_or_file(raw) or default
-
-    @option(help="fromfile prefix", metavar="<text>")
-    def fromfile_prefix(self, raw):
-        return raw or "@"
-
-    @option(help="fork address placeholder", metavar="<text>")
-    def fork_addr(self, raw):
-        return raw or "__address__"
 
     @option(help="callback url placeholder", metavar="<text>")
     def callback_url(self, raw):
@@ -69,6 +65,10 @@ class Config(Data):
     @option(help="callback payload placeholder", metavar="<text>")
     def callback_payload(self, raw):
         return raw or "__payload__"
+
+    @option(help="fromfile prefix", metavar="<text>")
+    def fromfile_prefix(self, raw):
+        return raw or "@"
 
     def _text_or_file(self, raw):
         if raw is None:

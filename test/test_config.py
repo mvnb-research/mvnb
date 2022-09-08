@@ -39,25 +39,22 @@ def test_help(capsys_test):
 
     capsys_test(
         """
-usage: mvnb [--help] [--version] [--addr <addr>] [--port <port>] [--repl <repl>]
-            [--preproc <preproc>] [--before-run <code>] [--after-run <code>]
-            [--fork <code>] [--callback <code>] [--fromfile-prefix <text>]
-            [--fork-addr <text>] [--callback-url <text>] [--callback-payload <text>]
+usage: mvnb [options]
 
 options:
   --help                     show help
   --version                  show version
   --addr <addr>              server address
   --port <port>              server port
-  --repl <repl>              repl command
-  --preproc <preproc>        preprocessor command
+  --repl <cmd>               repl command
+  --preproc <cmd>            preprocessor command
   --before-run <code>        before-run code
   --after-run <code>         after-run code
   --fork <code>              fork code
-  --callback <code>          callback code
-  --fromfile-prefix <text>   fromfile prefix
   --fork-addr <text>         fork address placeholder
+  --callback <code>          callback code
   --callback-url <text>      callback url placeholder
   --callback-payload <text>  callback payload placeholder
+  --fromfile-prefix <text>   fromfile prefix
 """
     )

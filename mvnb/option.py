@@ -12,6 +12,7 @@ class Parser(ArgumentParser):
             add_help=False,
             allow_abbrev=False,
             formatter_class=_HelpFormatter,
+            usage=f"{prog} [options]",
         )
         for f in data.fields:
             if isinstance(f, option):
