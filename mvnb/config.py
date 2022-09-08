@@ -54,8 +54,8 @@ class Config(Data):
         default = f"__mvnb_callback('{self.callback_url}', '{self.callback_message}')"
         return self._text_or_file(raw) or default
 
-    @option(help="file prefix", metavar="<text>")
-    def file_prefix(self, raw):
+    @option(help="fromfile prefix", metavar="<text>")
+    def fromfile_prefix(self, raw):
         return raw or "@"
 
     @option(help="fork address placeholder", metavar="<text>")
@@ -73,8 +73,8 @@ class Config(Data):
     def _text_or_file(self, raw):
         if raw is None:
             return None
-        if raw.startswith(self.file_prefix):
-            path = raw[len(self.file_prefix) :]
+        if raw.startswith(self.fromfile_prefix):
+            path = raw[len(self.fromfile_prefix) :]
             return Path(path).read_text()
         return raw
 
