@@ -3,7 +3,7 @@ from sys import executable
 
 from pytest import raises
 
-from mvnb import _bootstrap
+from mvnb import _bootstrap, _preprocessor
 from mvnb.config import Config
 
 
@@ -13,10 +13,12 @@ def test_default_values():
     assert config.addr == "0.0.0.0"
     assert config.port == 8000
     assert config.repl == [executable, "-i", _bootstrap.__file__]
+    assert config.preproc == [executable, _preprocessor.__file__]
     assert config.before_run is None
     assert config.after_run is None
     assert config.fork == "__mvnb_fork('__address__')"
     assert config.callback == "__mvnb_callback('__url__', '__message__')"
+    assert config.fromfile_prefix == "@"
     assert config.fork_addr == "__address__"
     assert config.callback_url == "__url__"
     assert config.callback_message == "__message__"
@@ -39,7 +41,7 @@ def test_help(capsys_test):
         """
 usage: mvnb [--help] [--version] [--addr <addr>] [--port <port>] [--repl <repl>]
             [--preproc <preproc>] [--before-run <code>] [--after-run <code>]
-            [--fork <code>] [--callback <code>] [--file-prefix <text>]
+            [--fork <code>] [--callback <code>] [--fromfile-prefix <text>]
             [--fork-addr <text>] [--callback-url <text>] [--callback-message <text>]
 
 options:
@@ -53,7 +55,7 @@ options:
   --after-run <code>         after-run code
   --fork <code>              fork code
   --callback <code>          callback code
-  --file-prefix <text>       file prefix
+  --fromfile-prefix <text>   fromfile prefix
   --fork-addr <text>         fork address placeholder
   --callback-url <text>      callback url placeholder
   --callback-message <text>  callback message placeholder
