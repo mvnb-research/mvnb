@@ -12,9 +12,3 @@ class Stdout(Output):
     @field
     def text(self, raw):
         return raw
-
-
-class Stderr(Output):
-    @field
-    def text(self, raw):
-        return raw
