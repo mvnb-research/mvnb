@@ -1,8 +1,7 @@
-from code import compile_command
-from sys import stdin
+if __name__ == "__main__":
+    from code import compile_command
+    from sys import stdin
 
-
-def main():
     buf = ""
     for line in stdin:
         buf += line
@@ -13,7 +12,3 @@ def main():
             buf = ""
     if buf:
         exit(1)
-
-
-if __name__ == "__main__":
-    main()

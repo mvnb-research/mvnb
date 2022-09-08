@@ -1,59 +1,59 @@
 from pytest import raises
 
+from mvnb.data import Data, field
 from mvnb.option import Parser, option
-from mvnb.record import Record, field
 
 
 def test_no_help(capsys_test):
-    parser = Parser("foo", Record)
+    parser = Parser("foo", Data)
 
     run(parser, "--help")
     capsys_test(
         """
-usage: foo
+usage: foo [options]
 foo: error: unrecognized arguments: --help
 """
     )
 
 
 def test_no_abbrev(capsys_test):
-    parser = Parser("foo", Record)
+    parser = Parser("foo", Data)
     parser.add_argument("--foo")
 
     run(parser, "-f", "foo")
     capsys_test(
         """
-usage: foo [--foo FOO]
+usage: foo [options]
 foo: error: unrecognized arguments: -f foo
 """
     )
 
 
 def test_help_width(capsys_test):
-    parser = Parser("foo", Record)
+    parser = Parser("foo", Data)
     parser.add_argument(
         "--help",
         action="help",
         help=(
             "This very long help message should be wrapped"
-            " so that every line is at most 88 characters long."
+            " so that every line is at most 80 characters long."
         ),
     )
 
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--help]
+usage: foo [options]
 
 options:
-  --help  This very long help message should be wrapped so that every line is at most 88
-          characters long.
+  --help  This very long help message should be wrapped so that every line is at
+          most 80 characters long.
 """
     )
 
 
 def test_option(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @option(help="foo value")
         def foo(self, _):
             pass
@@ -64,7 +64,7 @@ def test_option(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--foo FOO] [--help]
+usage: foo [options]
 
 options:
   --foo FOO  foo value
@@ -74,7 +74,7 @@ options:
 
 
 def test_ignore_non_option_field(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @field
         def bar(self, _):
             pass
@@ -85,7 +85,7 @@ def test_ignore_non_option_field(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--help]
+usage: foo [options]
 
 options:
   --help
@@ -94,7 +94,7 @@ options:
 
 
 def test_option_alternative(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @option("--bar", help="bar value")
         @option(help="foo value")
         def foo(self, _):
@@ -106,7 +106,7 @@ def test_option_alternative(capsys_test):
     run(parser, "--help")
     capsys_test(
         """
-usage: foo [--foo FOO] [--bar FOO] [--help]
+usage: foo [options]
 
 options:
   --foo FOO  foo value
@@ -117,7 +117,7 @@ options:
 
 
 def test_version(capsys_test):
-    class Foo(Record):
+    class Foo(Data):
         @option(action="version")
         def version(self, _):
             return "foo"
@@ -128,7 +128,7 @@ def test_version(capsys_test):
 
 
 def test_parse():
-    class Foo(Record):
+    class Foo(Data):
         @option(help="foo value")
         def foo(self, _):
             pass

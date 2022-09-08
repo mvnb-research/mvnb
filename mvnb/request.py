@@ -1,10 +1,10 @@
 from uuid import uuid4
 
-from mvnb.data import Data
-from mvnb.record import field
+from mvnb.data import field
+from mvnb.payload import Payload
 
 
-class Request(Data, abst=True):
+class Request(Payload, abst=True):
     @field
     def id(self, raw):
         return raw or uuid4().hex

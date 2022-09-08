@@ -2,18 +2,19 @@ from argparse import ArgumentParser, HelpFormatter, _ActionsContainer, _VersionA
 from functools import singledispatchmethod
 from shutil import get_terminal_size
 
-from mvnb.record import field
+from mvnb.data import field
 
 
 class Parser(ArgumentParser):
-    def __init__(self, prog, rec):
+    def __init__(self, prog, data):
         super().__init__(
             prog=prog,
             add_help=False,
             allow_abbrev=False,
             formatter_class=_HelpFormatter,
+            usage=f"{prog} [options]",
         )
-        for f in rec.fields:
+        for f in data.fields:
             if isinstance(f, option):
                 self.add_argument(f)
 
@@ -39,7 +40,7 @@ class option(field):
 
 class _HelpFormatter(HelpFormatter):
     def __init__(self, prog):
-        width = min(get_terminal_size((88, 24)).columns, 88)
+        width = min(get_terminal_size().columns, 80)
         super().__init__(prog, width=width, max_help_position=width)
 
 

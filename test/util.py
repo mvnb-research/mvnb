@@ -1,7 +1,7 @@
-def data_eq(data1, data2):
-    if data1.__class__ is data2.__class__:
-        for f in data1.fields:
-            if getattr(data1, f.name) != getattr(data2, f.name):
+def payload_eq(payload1, payload2):
+    if payload1.__class__ is payload2.__class__:
+        for f in payload1.fields:
+            if getattr(payload1, f.name) != getattr(payload2, f.name):
                 return False
         return True
     return False

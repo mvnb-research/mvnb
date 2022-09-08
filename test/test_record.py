@@ -1,10 +1,10 @@
 from random import random
 
-from mvnb.record import Record, field
+from mvnb.data import Data, field
 
 
 def test_get_field():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, raw):
             return raw
@@ -17,7 +17,7 @@ def test_get_field():
 
 
 def test_set_field():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, raw):
             return raw
@@ -31,7 +31,7 @@ def test_set_field():
 
 
 def test_del_field():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, raw):
             return raw
@@ -43,7 +43,7 @@ def test_del_field():
 
 
 def test_field_cache():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, _):
             return random()
@@ -53,7 +53,7 @@ def test_field_cache():
 
 
 def test_get_field_object():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, _):
             pass
@@ -63,7 +63,7 @@ def test_get_field_object():
 
 
 def test_get_fields():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, _):
             pass
@@ -79,7 +79,7 @@ def test_get_fields():
 
 
 def test_get_fields_inheritance():
-    class Foo(Record):
+    class Foo(Data):
         @field
         def foo(self, _):
             pass

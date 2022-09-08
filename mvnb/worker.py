@@ -90,7 +90,7 @@ class Worker(object):
         msg = msg.to_json()
         code = self._config.callback
         code = code.replace(self._config.callback_url, url)
-        code = code.replace(self._config.callback_message, msg)
+        code = code.replace(self._config.callback_payload, msg)
         return code
 
     def _callback_url(self):

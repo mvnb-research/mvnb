@@ -4,11 +4,11 @@ from shlex import split
 from sys import executable
 
 from mvnb import _bootstrap, _preprocessor
+from mvnb.data import Data
 from mvnb.option import Parser, option
-from mvnb.record import Record
 
 
-class Config(Record):
+class Config(Data):
     def __init__(self, args):
         super().__init__(**_parser.parse(args))
 
@@ -28,11 +28,11 @@ class Config(Record):
     def port(self, raw):
         return int(raw or 8000)
 
-    @option(help="repl command", metavar="<repl>")
+    @option(help="repl command", metavar="<cmd>")
     def repl(self, raw):
         return split(raw) if raw else [executable, "-i", _bootstrap.__file__]
 
-    @option(help="preprocessor command", metavar="<preproc>")
+    @option(help="preprocessor command", metavar="<cmd>")
     def preproc(self, raw):
         return split(raw) if raw else [executable, _preprocessor.__file__]
 
@@ -46,35 +46,35 @@ class Config(Record):
 
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
-        default = f"__fork('{self.fork_addr}')"
+        default = f"__mvnb_fork('{self.fork_addr}')"
         return self._text_or_file(raw) or default
-
-    @option(help="callback code", metavar="<code>")
-    def callback(self, raw):
-        default = f"__callback('{self.callback_url}', '{self.callback_message}')"
-        return self._text_or_file(raw) or default
-
-    @option(help="file prefix", metavar="<text>")
-    def file_prefix(self, raw):
-        return raw or "@"
 
     @option(help="fork address placeholder", metavar="<text>")
     def fork_addr(self, raw):
         return raw or "__address__"
 
+    @option(help="callback code", metavar="<code>")
+    def callback(self, raw):
+        default = f"__mvnb_callback('{self.callback_url}', '{self.callback_payload}')"
+        return self._text_or_file(raw) or default
+
     @option(help="callback url placeholder", metavar="<text>")
     def callback_url(self, raw):
         return raw or "__url__"
 
-    @option(help="callback message placeholder", metavar="<text>")
-    def callback_message(self, raw):
-        return raw or "__message__"
+    @option(help="callback payload placeholder", metavar="<text>")
+    def callback_payload(self, raw):
+        return raw or "__payload__"
+
+    @option(help="fromfile prefix", metavar="<text>")
+    def fromfile_prefix(self, raw):
+        return raw or "@"
 
     def _text_or_file(self, raw):
         if raw is None:
             return None
-        if raw.startswith(self.file_prefix):
-            path = raw[len(self.file_prefix) :]
+        if raw.startswith(self.fromfile_prefix):
+            path = raw[len(self.fromfile_prefix) :]
             return Path(path).read_text()
         return raw
 

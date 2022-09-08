@@ -1,10 +1,10 @@
 from json import dumps, loads
 
-from util import data_eq
+from util import payload_eq
 
-from mvnb.data import Data
 from mvnb.notebook import Cell, Notebook, Output
-from mvnb.output import Stderr, Stdout
+from mvnb.output import Stdout
+from mvnb.payload import Payload
 from mvnb.request import CreateCell, RunCell, UpdateCell
 from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
 
@@ -27,11 +27,6 @@ def test_output_default_fields():
 def test_stdout_default_fields():
     stdout = Stdout()
     _test(stdout, dict(_type="Stdout", cell=None, text=None))
-
-
-def test_stderr_default_fields():
-    stderr = Stderr()
-    _test(stderr, dict(_type="Stderr", cell=None, text=None))
 
 
 def test_create_cell_default_fields():
@@ -70,6 +65,6 @@ def test_did_run_cell_default_fields():
     _test(res, dict(_type="DidRunCell", request=None))
 
 
-def _test(data, dct):
-    assert loads(data.to_json()) == dct
-    assert data_eq(Data.from_json(dumps(dct)), data)
+def _test(payload, dct):
+    assert loads(payload.to_json()) == dct
+    assert payload_eq(Payload.from_json(dumps(dct)), payload)

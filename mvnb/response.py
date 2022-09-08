@@ -1,8 +1,8 @@
-from mvnb.data import Data
-from mvnb.record import field
+from mvnb.data import field
+from mvnb.payload import Payload
 
 
-class Response(Data, abst=True):
+class Response(Payload, abst=True):
     @field
     def request(self, raw):
         return raw

@@ -1,67 +1,45 @@
-from functools import singledispatch
-from json import dumps, loads
-
-from bidict import bidict
-
-from mvnb.record import Record
+from functools import cached_property
+from itertools import chain
 
 
-class Data(Record):
-    def __init_subclass__(cls, abst=False):
-        if not abst:
-            _classes[cls.__name__] = cls
+class Data(object):
+    def __init__(self, **raw):
+        self._raw = raw
+        self._cache = {}
 
-    @staticmethod
-    def from_json(json):
-        return _from_json(json)
-
-    def to_json(self):
-        return _to_json(self)
-
-
-def _to_json(data):
-    return dumps(_to_dict(data), separators=(",", ":"))
-
-
-def _from_json(json):
-    return _from_dict(loads(json))
+    @classmethod
+    @property
+    def fields(cls):
+        fs, ks = {}, set()
+        for c in cls.__mro__:
+            for k, v in vars(c).items():
+                if isinstance(v, field) and k not in ks:
+                    fs.setdefault(c, []).append(v)
+                    ks.add(k)
+        return chain(*reversed(fs.values()))
 
 
-@singledispatch
-def _to_dict(obj):
-    return obj
+class field(object):
+    def __init__(self, func):
+        self._func = func
 
+    def __get__(self, data, _):
+        if data:
+            if self.name not in data._cache:
+                raw = data._raw.get(self.name)
+                val = self._func(data, raw)
+                data._cache[self.name] = val
+            return data._cache[self.name]
+        return self
 
-@_to_dict.register(list)
-def _(lst):
-    return [_to_dict(e) for e in lst]
+    def __set__(self, data, raw):
+        data._raw[self.name] = raw
+        data._cache.pop(self.name, None)
 
+    def __delete__(self, data):
+        data._raw.pop(self.name, None)
+        data._cache.pop(self.name, None)
 
-@_to_dict.register(Data)
-def _(data):
-    cls = data.__class__
-    dct1 = {_type: _classes.inverse[cls]}
-    dct2 = {f.name: getattr(data, f.name) for f in cls.fields}
-    return {**dct1, **{k: _to_dict(v) for k, v in dct2.items()}}
-
-
-@singledispatch
-def _from_dict(obj):
-    return obj
-
-
-@_from_dict.register(list)
-def _(lst):
-    return [_from_dict(e) for e in lst]
-
-
-@_from_dict.register(dict)
-def _(dct):
-    cls = _classes[dct[_type]]
-    dct = {f.name: dct[f.name] for f in cls.fields if f.name in dct}
-    return cls(**{k: _from_dict(v) for k, v in dct.items()})
-
-
-_classes = bidict()
-
-_type = "_type"
+    @cached_property
+    def name(self):
+        return self._func.__name__

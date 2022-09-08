@@ -4,14 +4,14 @@ from mvnb.config import Config
 from mvnb.server import Server
 
 
-def main(args=None):
+def main():
     try:
-        config = Config(args)
+        config = Config(None)
         server = Server(config)
         run(server.start())
     except KeyboardInterrupt:
         pass
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()
