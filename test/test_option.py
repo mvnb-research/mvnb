@@ -36,7 +36,7 @@ def test_help_width(capsys_test):
         action="help",
         help=(
             "This very long help message should be wrapped"
-            " so that every line is at most 88 characters long."
+            " so that every line is at most 80 characters long."
         ),
     )
 
@@ -46,8 +46,8 @@ def test_help_width(capsys_test):
 usage: foo [options]
 
 options:
-  --help  This very long help message should be wrapped so that every line is at most 88
-          characters long.
+  --help  This very long help message should be wrapped so that every line is at
+          most 80 characters long.
 """
     )
 

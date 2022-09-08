@@ -40,7 +40,7 @@ class option(field):
 
 class _HelpFormatter(HelpFormatter):
     def __init__(self, prog):
-        width = min(get_terminal_size((88, 24)).columns, 88)
+        width = min(get_terminal_size().columns, 80)
         super().__init__(prog, width=width, max_help_position=width)
 
 
