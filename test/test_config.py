@@ -17,11 +17,11 @@ def test_default_values():
     assert config.before_run is None
     assert config.after_run is None
     assert config.fork == "__mvnb_fork('__address__')"
-    assert config.callback == "__mvnb_callback('__url__', '__message__')"
+    assert config.callback == "__mvnb_callback('__url__', '__payload__')"
     assert config.fromfile_prefix == "@"
     assert config.fork_addr == "__address__"
     assert config.callback_url == "__url__"
-    assert config.callback_message == "__message__"
+    assert config.callback_payload == "__payload__"
 
 
 def test_file_read():
@@ -42,7 +42,7 @@ def test_help(capsys_test):
 usage: mvnb [--help] [--version] [--addr <addr>] [--port <port>] [--repl <repl>]
             [--preproc <preproc>] [--before-run <code>] [--after-run <code>]
             [--fork <code>] [--callback <code>] [--fromfile-prefix <text>]
-            [--fork-addr <text>] [--callback-url <text>] [--callback-message <text>]
+            [--fork-addr <text>] [--callback-url <text>] [--callback-payload <text>]
 
 options:
   --help                     show help
@@ -58,6 +58,6 @@ options:
   --fromfile-prefix <text>   fromfile prefix
   --fork-addr <text>         fork address placeholder
   --callback-url <text>      callback url placeholder
-  --callback-message <text>  callback message placeholder
+  --callback-payload <text>  callback payload placeholder
 """
     )

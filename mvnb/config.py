@@ -51,7 +51,7 @@ class Config(Data):
 
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
-        default = f"__mvnb_callback('{self.callback_url}', '{self.callback_message}')"
+        default = f"__mvnb_callback('{self.callback_url}', '{self.callback_payload}')"
         return self._text_or_file(raw) or default
 
     @option(help="fromfile prefix", metavar="<text>")
@@ -66,9 +66,9 @@ class Config(Data):
     def callback_url(self, raw):
         return raw or "__url__"
 
-    @option(help="callback message placeholder", metavar="<text>")
-    def callback_message(self, raw):
-        return raw or "__message__"
+    @option(help="callback payload placeholder", metavar="<text>")
+    def callback_payload(self, raw):
+        return raw or "__payload__"
 
     def _text_or_file(self, raw):
         if raw is None:
