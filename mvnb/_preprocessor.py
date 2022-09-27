@@ -1,14 +1,25 @@
 if __name__ == "__main__":
-    from code import compile_command
-    from sys import stdin
+    import ast
+    import sys
 
-    buf = ""
-    for line in stdin:
-        buf += line
-        if compile_command(buf):
-            print(buf, end="")
-            if 1 < buf.count("\n"):
-                print()
-            buf = ""
-    if buf:
+    compound_stmts = (
+        ast.FunctionDef,
+        ast.If,
+        ast.ClassDef,
+        ast.With,
+        ast.For,
+        ast.Try,
+        ast.While,
+        ast.Match,
+    )
+
+    try:
+        node = ast.parse(sys.stdin.read())
+    except SyntaxError:
         exit(1)
+    else:
+        for n in node.body:
+            lst = ast.unparse(n).splitlines()
+            print("\n".join(e for e in lst if e))
+            if isinstance(n, compound_stmts):
+                print()
