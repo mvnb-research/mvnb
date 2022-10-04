@@ -116,6 +116,10 @@ class Server(object):
         cell.source = response.request.source
         await self._broadcast(response)
 
+    @_handle_response.register(DidRunCell)
+    async def _(self, response):
+        await self._broadcast(response)
+
     @_handle_response.register(Stdout)
     async def _(self, response, sender):
         cell = self._cells[self._workers.inverse[sender]]
@@ -126,7 +130,7 @@ class Server(object):
 
     async def _callback(self, msg):
         res = DidRunCell(request=msg)
-        await self._broadcast(res)
+        await self._responses.put(res)
 
     async def _broadcast(self, msg):
         json = msg.to_json()
