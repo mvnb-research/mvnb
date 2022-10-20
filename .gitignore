@@ -7,6 +7,7 @@ __pycache__
 /.venv
 /.vscode
 /.yarn
+/build
 /dist
 /coverage.xml
 /mvnb.egg-info
