@@ -1,8 +1,7 @@
 from functools import singledispatch
 from json import dumps, loads
 
-from bidict import bidict
-
+from mvnb.bidict import BiDict
 from mvnb.data import Data
 
 
@@ -40,7 +39,7 @@ def _(lst):
 @_to_dict.register(Payload)
 def _(payload):
     cls = payload.__class__
-    dct1 = {_type: _classes.inverse[cls]}
+    dct1 = {_type: _classes.find_key(cls)}
     dct2 = {f.name: getattr(payload, f.name) for f in cls.fields}
     return {**dct1, **{k: _to_dict(v) for k, v in dct2.items()}}
 
@@ -62,6 +61,6 @@ def _(dct):
     return cls(**{k: _from_dict(v) for k, v in dct.items()})
 
 
-_classes = bidict()
+_classes = BiDict()
 
 _type = "_type"

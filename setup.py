@@ -34,6 +34,6 @@ setup(
     packages=["mvnb"],
     version="0.0.0",
     package_data={"mvnb": ["gui/**/*"]},
-    install_requires=["bidict>=0.22.0", "tornado>=6.2.0"],
+    install_requires=["tornado>=6.2.0"],
     entry_points=dict(console_scripts=["mvnb=mvnb.__main__:main"]),
 )
