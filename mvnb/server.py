@@ -3,9 +3,9 @@ from functools import singledispatchmethod
 from tempfile import gettempdir
 from uuid import uuid4
 
-from bidict import bidict
 from tornado.web import Application
 
+from mvnb.bidict import BiDict
 from mvnb.handler import CallbackHandler, FileHandler, MessageHandler
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
@@ -20,7 +20,7 @@ class Server(object):
         self._config = config
         self._users = set()
         self._cells = dict()
-        self._workers = bidict()
+        self._workers = BiDict()
         self._notebook = Notebook()
         self._requests = Queue(self._handle_request)
         self._responses = Queue(self._handle_response)
@@ -122,7 +122,7 @@ class Server(object):
 
     @_handle_response.register(Stdout)
     async def _(self, response, sender):
-        cell = self._cells[self._workers.inverse[sender]]
+        cell = self._cells[self._workers.find_key(sender)]
         response.cell = cell.id
         output = Output(type="text", data=response.text)
         cell.outputs.append(output)
