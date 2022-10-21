@@ -18,3 +18,7 @@ class DidUpdateCell(Response):
 
 class DidRunCell(Response):
     pass
+
+
+class DidSaveNotebook(Response):
+    pass

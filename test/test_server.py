@@ -93,6 +93,7 @@ async def test_gui(server):
 async def client(config, server):
     client = Client(config)
     await client.open()
+    await client.recv()
     yield client
     await client.close()
 

@@ -45,6 +45,7 @@ usage: mvnb [options]
 options:
   --help                     show help
   --version                  show version
+  --path <path>              notebook path
   --addr <addr>              server address
   --port <port>              server port
   --repl-command <cmd>       repl command

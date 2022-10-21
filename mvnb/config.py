@@ -20,6 +20,10 @@ class Config(Data):
     def version(self, _):
         return version(_package)
 
+    @option(help="notebook path", metavar="<path>")
+    def path(self, raw):
+        return Path(raw) if raw else None
+
     @option(help="server address", metavar="<addr>")
     def addr(self, raw):
         return raw or "0.0.0.0"

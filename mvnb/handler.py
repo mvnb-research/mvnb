@@ -10,12 +10,14 @@ class MessageHandler(WebSocketHandler):
 
     PATH = r"/message"
 
-    def initialize(self, users, requests):
+    def initialize(self, users, requests, notebook):
         self._users = users
         self._requests = requests
+        self._notebook = notebook
 
-    def open(self):
+    async def open(self):
         self._users.add(self)
+        await self.write_message(self._notebook.to_json())
 
     def on_close(self):
         self._users.remove(self)
