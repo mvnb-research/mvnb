@@ -14,8 +14,7 @@ from tty import setraw
 from mvnb.handler import CallbackHandler
 from mvnb.output import Stdout
 from mvnb.queue import Queue
-from mvnb.request import CreateCell, RunCell
-from mvnb.response import DidCreateCell
+from mvnb.request import RunCell
 
 
 class Worker(object):
@@ -27,22 +26,25 @@ class Worker(object):
         self._proc = None
         self._requests = Queue(self._handle_request)
 
-    async def start_root(self, req):
+    async def start_root(self):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
             self._proc = _popen(self._config.repl, fd2)
             self._pid = self._proc.pid
-        await self._start(req)
+        self._start()
 
-    async def start_fork(self, req, addr, event):
+    async def start_fork(self, addr, event):
         with _connect(addr) as sock:
             event.set()
             self._fd = await _recv_fd(sock)
             self._pid = await _recv_pid(sock)
-        await self._start(req)
+        self._start()
 
     async def put(self, msg, *args):
         await self._requests.put(msg, *args)
+
+    async def fork(self, addr):
+        self._write(self._fork_code(addr))
 
     def stop(self):
         if self._proc:
@@ -54,10 +56,9 @@ class Worker(object):
         close(self._fd)
         self._requests.stop()
 
-    def _start(self, req):
+    def _start(self):
         self._requests.start()
         get_event_loop().add_reader(self._fd, self._read_callback)
-        return self._reply(DidCreateCell(request=req))
 
     def _read_callback(self):
         text = read(self._fd, 1024).decode()
@@ -66,10 +67,6 @@ class Worker(object):
     @singledispatchmethod
     async def _handle_request(self, _):
         raise Exception()  # pragma: no cover
-
-    @_handle_request.register(CreateCell)
-    async def _(self, _, addr):
-        self._write(self._fork_code(addr))
 
     @_handle_request.register(RunCell)
     async def _(self, msg, code):

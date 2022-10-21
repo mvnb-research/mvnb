@@ -75,22 +75,11 @@ class Server(object):
 
     @_handle_request.register(CreateCell)
     async def _(self, req):
-        if req.parent:
-            await self._fork_cell(req)
-        else:
-            await self._create_cell(req)
-
-    async def _create_cell(self, req):
-        worker = Worker(self._config, self._responses.put)
-        await worker.start_root(req)
-
-    async def _fork_cell(self, req):
-        parent = self._workers[req.parent]
-        worker = Worker(self._config, self._responses.put)
-        addr, event = _socket_address(), Event()
-        create_task(worker.start_fork(req, addr, event))
-        await event.wait()
-        await parent.put(req, addr)
+        cell = Cell(id=req.cell, parent=req.parent)
+        self._notebook.cells.append(cell)
+        self._cells[cell.id] = cell
+        response = DidCreateCell(request=req)
+        await self._responses.put(response)
 
     @_handle_request.register(UpdateCell)
     async def _(self, req):
@@ -102,18 +91,22 @@ class Server(object):
     @_handle_request.register(RunCell)
     async def _(self, req):
         cell = self._cells[req.cell]
+        if cell.parent:
+            parent = self._workers[cell.parent]
+            worker = Worker(self._config, self._responses.put)
+            addr, event = _socket_address(), Event()
+            create_task(worker.start_fork(addr, event))
+            await event.wait()
+            await parent.fork(addr)
+            self._workers[cell.id] = worker
+        else:
+            worker = Worker(self._config, self._responses.put)
+            await worker.start_root()
+            self._workers[cell.id] = worker
         await self._workers[cell.id].put(req, cell.source)
 
     @singledispatchmethod
     async def _handle_response(self, response):
-        await self._broadcast(response)
-
-    @_handle_response.register(DidCreateCell)
-    async def _(self, response, sender):
-        cell = Cell(id=response.request.cell, parent=response.request.parent)
-        self._notebook.cells.append(cell)
-        self._cells[cell.id] = cell
-        self._workers[cell.id] = sender
         await self._broadcast(response)
 
     @_handle_response.register(Stdout)
