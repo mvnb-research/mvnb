@@ -1,6 +1,7 @@
 from asyncio import FIRST_COMPLETED, Event, create_task, wait
 from functools import singledispatchmethod
 from tempfile import gettempdir
+from traceback import print_exception
 from uuid import uuid4
 
 from tornado.web import Application
@@ -28,7 +29,10 @@ class Server(object):
 
     async def start(self):
         self._http = self._start_app()
-        await self._start_queues()
+        done, _ = await self._start_queues()
+        for t in done:
+            if e := t.exception():
+                print_exception(e)
 
     def stop(self):
         self._http.stop()
