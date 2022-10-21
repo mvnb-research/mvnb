@@ -12,7 +12,8 @@ def test_default_values():
     assert config.version == "0.0.0"
     assert config.addr == "0.0.0.0"
     assert config.port == 8000
-    assert config.repl == [executable, "-i", _bootstrap.__file__]
+    assert config.repl_command == executable
+    assert config.repl_arguments == ["-i", _bootstrap.__file__]
     assert config.preproc == [executable, _preprocessor.__file__]
     assert config.before_run is None
     assert config.after_run is None
@@ -46,7 +47,8 @@ options:
   --version                  show version
   --addr <addr>              server address
   --port <port>              server port
-  --repl <cmd>               repl command
+  --repl-command <cmd>       repl command
+  --repl-arguments <args>    repl arguments
   --preproc <cmd>            preprocessor command
   --before-run <code>        before-run code
   --after-run <code>         after-run code

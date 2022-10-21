@@ -29,7 +29,7 @@ class Worker(object):
     async def start_root(self):
         with _openpty() as (fd1, fd2):
             self._fd = fd1
-            self._proc = _popen(self._config.repl, fd2)
+            self._proc = _popen(self._config, fd2)
             self._pid = self._proc.pid
         self._start()
 
@@ -108,7 +108,8 @@ class Worker(object):
         return self._response(msg, self)
 
 
-def _popen(args, fd):
+def _popen(config, fd):
+    args = config.repl_command, *config.repl_arguments
     return Popen(args, stdin=fd, stdout=fd, stderr=fd)
 
 

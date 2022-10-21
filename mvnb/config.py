@@ -29,8 +29,12 @@ class Config(Data):
         return int(raw or 8000)
 
     @option(help="repl command", metavar="<cmd>")
-    def repl(self, raw):
-        return split(raw) if raw else [executable, "-i", _bootstrap.__file__]
+    def repl_command(self, raw):
+        return raw or executable
+
+    @option(help="repl arguments", metavar="<args>")
+    def repl_arguments(self, raw):
+        return split(raw) if raw else ["-i", _bootstrap.__file__]
 
     @option(help="preprocessor command", metavar="<cmd>")
     def preproc(self, raw):
