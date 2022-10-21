@@ -90,6 +90,8 @@ class Server(object):
 
     @_handle_request.register(UpdateCell)
     async def _(self, req):
+        cell = self._cells[req.cell]
+        cell.source = req.source
         response = DidUpdateCell(request=req)
         await self._responses.put(response)
 
@@ -99,8 +101,8 @@ class Server(object):
         await self._workers[cell.id].put(req, cell.source)
 
     @singledispatchmethod
-    async def _handle_response(self, response, _):
-        raise Exception()  # pragma: no cover
+    async def _handle_response(self, response):
+        await self._broadcast(response)
 
     @_handle_response.register(DidCreateCell)
     async def _(self, response, sender):
@@ -108,16 +110,6 @@ class Server(object):
         self._notebook.cells.append(cell)
         self._cells[cell.id] = cell
         self._workers[cell.id] = sender
-        await self._broadcast(response)
-
-    @_handle_response.register(DidUpdateCell)
-    async def _(self, response):
-        cell = self._cells[response.request.cell]
-        cell.source = response.request.source
-        await self._broadcast(response)
-
-    @_handle_response.register(DidRunCell)
-    async def _(self, response):
         await self._broadcast(response)
 
     @_handle_response.register(Stdout)
