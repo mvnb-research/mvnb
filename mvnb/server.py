@@ -1,5 +1,6 @@
 from asyncio import FIRST_COMPLETED, Event, create_task, wait
 from functools import singledispatchmethod
+from pathlib import Path
 from tempfile import gettempdir
 from traceback import print_exception
 from uuid import uuid4
@@ -10,9 +11,10 @@ from mvnb.bidict import BiDict
 from mvnb.handler import CallbackHandler, FileHandler, MessageHandler
 from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
+from mvnb.payload import Payload
 from mvnb.queue import Queue
-from mvnb.request import CreateCell, RunCell, UpdateCell
-from mvnb.response import DidCreateCell, DidRunCell, DidUpdateCell
+from mvnb.request import CreateCell, RunCell, SaveNotebook, UpdateCell
+from mvnb.response import DidCreateCell, DidRunCell, DidSaveNotebook, DidUpdateCell
 from mvnb.worker import Worker
 
 
@@ -22,12 +24,13 @@ class Server(object):
         self._users = set()
         self._cells = dict()
         self._workers = BiDict()
-        self._notebook = Notebook()
         self._requests = Queue(self._handle_request)
         self._responses = Queue(self._handle_response)
+        self._notebook = None
         self._http = None
 
     async def start(self):
+        self._notebook = self._load_notebook()
         self._http = self._start_app()
         done, _ = await self._start_queues()
         for t in done:
@@ -40,6 +43,11 @@ class Server(object):
         self._responses.stop()
         for worker in self._workers.values():
             worker.stop()
+
+    def _load_notebook(self):
+        if path := self._config.path:
+            return Payload.from_json(path.read_text())
+        return Notebook()
 
     def _start_app(self):
         return Application(
@@ -57,7 +65,7 @@ class Server(object):
 
     @property
     def _message_handler(self):
-        args = dict(users=self._users, requests=self._requests)
+        args = dict(users=self._users, requests=self._requests, notebook=self._notebook)
         return MessageHandler.PATH, MessageHandler, args
 
     @property
@@ -105,6 +113,14 @@ class Server(object):
             self._workers[cell.id] = worker
         await self._workers[cell.id].put(req, cell.source)
 
+    @_handle_request.register(SaveNotebook)
+    async def _(self, req):
+        if not self._config.path:
+            self._config.path = _new_file_path()
+        self._config.path.write_text(self._notebook.to_json())
+        response = DidSaveNotebook(request=req)
+        await self._responses.put(response)
+
     @singledispatchmethod
     async def _handle_response(self, response):
         await self._broadcast(response)
@@ -125,6 +141,17 @@ class Server(object):
         json = msg.to_json()
         for user in self._users:
             await user.write_message(json)
+
+
+def _new_file_path():
+    i = 0
+    while True:
+        tail = f"-{i}" if i else ""
+        path = Path(f"untitled{tail}.mvnb")
+        if path.exists():
+            i += 1
+        else:
+            return path
 
 
 def _socket_address():
