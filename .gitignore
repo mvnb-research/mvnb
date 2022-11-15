@@ -15,3 +15,4 @@ __pycache__
 /mvnb-gui/.parcel-cache
 /mvnb-gui/dist
 /mvnb-gui/node_modules
+/mvnb-gui/yarn
