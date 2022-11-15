@@ -2,8 +2,8 @@
   "source": "src/index.html",
   "scripts": {
     "build": "parcel build",
-    "format": "prettier -w src/*.html src/*.tsx *.json",
-    "lint": "prettier -c src/*.html src/*.tsx *.json"
+    "format": "prettier -w src/*.html src/*.ts src/*.tsx *.json",
+    "lint": "prettier -c src/*.html src/*.ts src/*.tsx *.json"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.4.0",
