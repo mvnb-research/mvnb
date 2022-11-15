@@ -109,6 +109,7 @@ $(yarn)/node_modules/.bin/yarn:
 	mkdir -p $(yarn)
 	echo '{}' > $(yarn)/package.json
 	cd $(yarn) && $(NPM) install --no-package-lock yarn
+	cd mvnb-gui && ln -s ../$(yarn)/node_modules/.bin/yarn
 
 $(venv)/bin/pyproject-build: $(venv)/bin/pip
 	$(venv)/bin/pip install -I build
