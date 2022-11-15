@@ -34,5 +34,5 @@ class RunCell(Request):
     pass
 
 
-class SaveNotebook(Request):
+class SaveNotebook(Payload):
     pass
