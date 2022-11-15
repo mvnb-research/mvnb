@@ -20,6 +20,10 @@ export type CreateCell = {
 };
 
 export type DeleteCell = {
-  _type: "DeleteCell";
   cell: string;
+};
+
+export type Stdout = {
+  cell: string;
+  text: string;
 };

@@ -8,6 +8,10 @@ export const setNodes = (f: (nodes: Node<Cell>[]) => Node<Cell>[]) =>
 export const setEdges = (f: (edges: Edge<void>[]) => Edge<void>[]) =>
   _setEdges!(f);
 
+export const setOutputs = (id: string, f: (edges: Output[]) => Output[]) => {
+  _setOutputs.get(id)!.call(this, f);
+};
+
 export const initSetNodes = (f: Dispatch<SetStateAction<Node<Cell>[]>>) => {
   _setNodes = f;
 };

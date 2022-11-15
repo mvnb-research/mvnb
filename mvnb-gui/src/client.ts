@@ -1,4 +1,4 @@
-import { CreateCell, DeleteCell, Notebook } from "./message";
+import { CreateCell, DeleteCell, Notebook, Stdout } from "./message";
 import * as state from "./state";
 import * as websocket from "./websocket";
 import { v4 as uuid } from "uuid";
@@ -37,6 +37,13 @@ const onMessage = (type: string, data: any) => {
     const request = data.request as DeleteCell;
     deleteNode(request.cell);
     deleteEdge(request.cell);
+  } else if (type === "Stdout") {
+    console.log(data);
+    const stdout = data as Stdout;
+    state.setOutputs(stdout.cell, (os) => [
+      ...os,
+      { type: "text", data: stdout.text },
+    ]);
   }
 };
 

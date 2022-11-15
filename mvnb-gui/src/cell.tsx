@@ -19,7 +19,13 @@ export const CellView = (props: NodeProps<Cell>) => {
       <Handle type="target" position={Position.Top} />
       <Card>
         <ButtonGroup>
-          <IconButton color="primary">
+          <IconButton
+            color="primary"
+            onClick={() => {
+              client.updateCell(props.id, source);
+              client.runCell(props.id);
+            }}
+          >
             <PlayCircle />
           </IconButton>
           <IconButton
