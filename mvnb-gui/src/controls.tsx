@@ -1,3 +1,4 @@
+import * as client from "./client";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import { ButtonGroup, Card, IconButton } from "@mui/material";
@@ -11,7 +12,7 @@ export const Panel = () => (
       <IconButton color="primary">
         <SaveIcon />
       </IconButton>
-      <IconButton color="primary">
+      <IconButton color="primary" onClick={() => client.createCell(null)}>
         <AddIcon />
       </IconButton>
     </ButtonGroup>

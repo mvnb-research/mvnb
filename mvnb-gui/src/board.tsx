@@ -9,7 +9,6 @@ export const Board = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState<void>([]);
   state.initSetNodes(setNodes);
   state.initSetEdges(setEdges);
-  websocket.setListener((t, d) => console.log(t, d));
   return (
     <ReactFlow
       nodes={nodes}

@@ -13,3 +13,8 @@ export type Output = {
   type: string;
   data: string;
 };
+
+export type CreateCell = {
+  cell: string;
+  parent: string | null;
+};
