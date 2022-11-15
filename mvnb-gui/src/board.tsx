@@ -1,10 +1,13 @@
 import { Cell } from "./message";
 import { Panel } from "./panel";
+import * as state from "./state";
 import ReactFlow, { useEdgesState, useNodesState } from "react-flow-renderer";
 
 export const Board = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Cell>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<void>([]);
+  state.initSetNodes(setNodes);
+  state.initSetEdges(setEdges);
   return (
     <ReactFlow
       nodes={nodes}
