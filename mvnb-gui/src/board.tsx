@@ -1,8 +1,18 @@
+import { Cell } from "./message";
 import { Panel } from "./panel";
-import ReactFlow from "react-flow-renderer";
+import ReactFlow, { useEdgesState, useNodesState } from "react-flow-renderer";
 
-export const Board = () => (
-  <ReactFlow>
-    <Panel />
-  </ReactFlow>
-);
+export const Board = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState<Cell>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<void>([]);
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+    >
+      <Panel />
+    </ReactFlow>
+  );
+};
