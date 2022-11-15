@@ -1,6 +1,6 @@
 import * as client from "./client";
-import { Cell } from "./types";
 import * as state from "./state";
+import { Cell } from "./types";
 import { python } from "@codemirror/lang-python";
 import { Delete, PlayCircle } from "@mui/icons-material";
 import { ButtonGroup, Card, CardContent, IconButton } from "@mui/material";

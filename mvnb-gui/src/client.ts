@@ -1,5 +1,5 @@
-import { CreateCell, DeleteCell, Notebook, Stdout } from "./types";
 import * as state from "./state";
+import { CreateCell, DeleteCell, Notebook, Stdout } from "./types";
 import * as websocket from "./websocket";
 import { v4 as uuid } from "uuid";
 
