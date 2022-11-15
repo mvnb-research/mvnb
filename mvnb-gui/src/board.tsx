@@ -1,6 +1,6 @@
 import { CellView } from "./cell";
 import { Panel } from "./controls";
-import { Cell } from "./message";
+import { Cell } from "./types";
 import * as state from "./state";
 import * as websocket from "./websocket";
 import ReactFlow, { useEdgesState, useNodesState } from "react-flow-renderer";

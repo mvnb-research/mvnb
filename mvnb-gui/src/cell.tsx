@@ -1,5 +1,5 @@
 import * as client from "./client";
-import { Cell } from "./message";
+import { Cell } from "./types";
 import * as state from "./state";
 import { python } from "@codemirror/lang-python";
 import { Delete, PlayCircle } from "@mui/icons-material";

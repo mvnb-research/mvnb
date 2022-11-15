@@ -1,4 +1,4 @@
-import { Cell, Output } from "./message";
+import { Cell, Output } from "./types";
 import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "react-flow-renderer";
 
