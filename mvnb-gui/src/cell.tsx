@@ -19,13 +19,7 @@ export const CellView = (props: NodeProps<Cell>) => {
       <Handle type="target" position={Position.Top} />
       <Card>
         <ButtonGroup>
-          <IconButton
-            color="primary"
-            onClick={() => {
-              client.updateCell(props.id, source);
-              client.runCell(props.id);
-            }}
-          >
+          <IconButton color="primary" onClick={() => client.runCell(props.id)}>
             <PlayCircle />
           </IconButton>
           <IconButton
@@ -39,7 +33,10 @@ export const CellView = (props: NodeProps<Cell>) => {
           <ReactCodeMirror
             value={source}
             extensions={[python()]}
-            onChange={(value, viewUpdate) => setSource(value)}
+            onChange={(value, viewUpdate) => {
+              client.updateCell(props.id, value);
+              setSource(value);
+            }}
           />
         </CardContent>
         {outputs.length > 0 && (
