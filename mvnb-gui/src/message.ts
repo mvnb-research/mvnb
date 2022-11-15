@@ -18,3 +18,8 @@ export type CreateCell = {
   cell: string;
   parent: string | null;
 };
+
+export type DeleteCell = {
+  _type: "DeleteCell";
+  cell: string;
+};

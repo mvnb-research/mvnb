@@ -9,7 +9,7 @@ export const Panel = () => (
     style={{ position: "absolute", top: 10, right: 10, zIndex: 99 }}
   >
     <ButtonGroup orientation="vertical">
-      <IconButton color="primary">
+      <IconButton color="primary" onClick={() => client.saveNotebook()}>
         <SaveIcon />
       </IconButton>
       <IconButton color="primary" onClick={() => client.createCell(null)}>

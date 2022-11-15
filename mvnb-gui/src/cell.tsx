@@ -1,3 +1,4 @@
+import * as client from "./client";
 import { Cell } from "./message";
 import * as state from "./state";
 import { python } from "@codemirror/lang-python";
@@ -21,7 +22,10 @@ export const CellView = (props: NodeProps<Cell>) => {
           <IconButton color="primary">
             <PlayCircle />
           </IconButton>
-          <IconButton color="primary">
+          <IconButton
+            color="primary"
+            onClick={() => client.deleteCell(props.id)}
+          >
             <Delete />
           </IconButton>
         </ButtonGroup>
