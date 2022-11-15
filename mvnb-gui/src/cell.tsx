@@ -3,7 +3,7 @@ import * as state from "./state";
 import { Cell } from "./types";
 import { python } from "@codemirror/lang-python";
 import { Delete, PlayCircle } from "@mui/icons-material";
-import { ButtonGroup, Card, CardContent, IconButton } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export const CellView = (props: NodeProps<Cell>) => {
     <Box width={`${cellWidth}vw`}>
       <Handle type="target" position={Position.Top} />
       <Card>
-        <ButtonGroup>
+        <CardActions>
           <IconButton color="primary" onClick={() => client.runCell(props.id)}>
             <PlayCircle />
           </IconButton>
@@ -28,7 +28,7 @@ export const CellView = (props: NodeProps<Cell>) => {
           >
             <Delete />
           </IconButton>
-        </ButtonGroup>
+        </CardActions>
         <CardContent>
           <ReactCodeMirror
             value={source}
