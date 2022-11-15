@@ -18,7 +18,7 @@ export const CellView = (props: NodeProps<Cell>) => {
     <Box width={`${cellWidth}vw`}>
       <Handle type="target" position={Position.Top} />
       <Card variant="outlined">
-        <CardActions>
+        <CardActions disableSpacing={true}>
           <IconButton color="primary" onClick={() => client.runCell(props.id)}>
             <PlayCircle />
           </IconButton>
@@ -29,7 +29,7 @@ export const CellView = (props: NodeProps<Cell>) => {
             <Delete />
           </IconButton>
         </CardActions>
-        <CardContent>
+        <CardContent sx={{ pt: 0 }}>
           <ReactCodeMirror
             value={source}
             extensions={[python()]}
@@ -52,4 +52,4 @@ export const CellView = (props: NodeProps<Cell>) => {
   );
 };
 
-const cellWidth = 45;
+const cellWidth = 48;
