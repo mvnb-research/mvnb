@@ -17,7 +17,7 @@ export const CellView = (props: NodeProps<Cell>) => {
   return (
     <Box width={`${cellWidth}vw`}>
       <Handle type="target" position={Position.Top} />
-      <Card>
+      <Card variant="outlined">
         <CardActions>
           <IconButton color="primary" onClick={() => client.runCell(props.id)}>
             <PlayCircle />
