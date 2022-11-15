@@ -20,6 +20,10 @@ class CreateCell(Request):
         return raw
 
 
+class DeleteCell(Request):
+    pass
+
+
 class UpdateCell(Request):
     @field
     def source(self, raw):
