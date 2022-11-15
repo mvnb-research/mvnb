@@ -1,3 +1,4 @@
+import { CellView } from "./cell";
 import { Panel } from "./controls";
 import { Cell } from "./message";
 import * as state from "./state";
@@ -13,6 +14,7 @@ export const Board = () => {
     <ReactFlow
       nodes={nodes}
       edges={edges}
+      nodeTypes={nodeTypes}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onInit={() => websocket.connect()}
@@ -21,3 +23,5 @@ export const Board = () => {
     </ReactFlow>
   );
 };
+
+const nodeTypes = { cell: CellView };

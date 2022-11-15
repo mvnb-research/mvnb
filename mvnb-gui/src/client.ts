@@ -22,9 +22,10 @@ const onMessage = (type: string, data: any) => {
 
 const createNode = (id: string, parent: string | null) => {
   state.setNodes((nodes) => {
+    const type = "cell";
     const data = { id, parent, source: "", outputs: [] };
     const position = { x: 0, y: 0 };
-    return [...nodes, { id, data, position }];
+    return [...nodes, { id, data, type, position }];
   });
 };
 

@@ -1,4 +1,4 @@
-import { Cell } from "./message";
+import { Cell, Output } from "./message";
 import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "react-flow-renderer";
 
@@ -16,6 +16,32 @@ export const initSetEdges = (f: Dispatch<SetStateAction<Edge<void>[]>>) => {
   _setEdges = f;
 };
 
+export const addSetSource = (
+  id: string,
+  f: Dispatch<SetStateAction<string>>
+) => {
+  _setSource.set(id, f);
+};
+
+export const addSetOutputs = (
+  id: string,
+  f: Dispatch<SetStateAction<Output[]>>
+) => {
+  _setOutputs.set(id, f);
+};
+
+export const removeSetSource = (id: string) => {
+  _setSource.delete(id);
+};
+
+export const removeSetOutputs = (id: string) => {
+  _setOutputs.delete(id);
+};
+
 var _setNodes = null as Dispatch<SetStateAction<Node<Cell>[]>> | null;
 
 var _setEdges = null as Dispatch<SetStateAction<Edge<void>[]>> | null;
+
+var _setSource = new Map<string, Dispatch<SetStateAction<string>>>();
+
+var _setOutputs = new Map<string, Dispatch<SetStateAction<Output[]>>>();
