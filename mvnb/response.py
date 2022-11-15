@@ -12,6 +12,10 @@ class DidCreateCell(Response):
     pass
 
 
+class DidDeleteCell(Response):
+    pass
+
+
 class DidUpdateCell(Response):
     pass
 
