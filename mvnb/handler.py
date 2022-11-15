@@ -10,6 +10,9 @@ class MessageHandler(WebSocketHandler):
 
     PATH = r"/message"
 
+    def check_origin(self, origin):
+        return True
+
     def initialize(self, users, requests, notebook):
         self._users = users
         self._requests = requests
