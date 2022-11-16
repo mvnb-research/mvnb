@@ -12,6 +12,10 @@ export const setOutputs = (id: string, f: (edges: Output[]) => Output[]) => {
   _setOutputs.get(id)!.call(this, f);
 };
 
+export const setSource = (id: string, source: string) => {
+  _setSource.get(id)!.call(this, source);
+};
+
 export const initSetNodes = (f: Dispatch<SetStateAction<Node<Cell>[]>>) => {
   _setNodes = f;
 };

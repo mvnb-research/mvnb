@@ -6,6 +6,7 @@ import {
   Notebook,
   Output,
   Stdout,
+  UpdateCell,
 } from "./types";
 import * as websocket from "./websocket";
 import { v4 as uuid } from "uuid";
@@ -53,6 +54,12 @@ const onMessage = (type: string, data: any) => {
     if (websocket.userId !== request.user) {
       moveNode(request.cell, request.x, request.y);
     }
+  } else if (type === "DidUpdateCell") {
+    const request = data.request as UpdateCell;
+    if (websocket.userId !== request.user) {
+      updateSource(request.cell, request.source);
+      console.log(websocket.userId, request.user);
+    }
   } else if (type === "DidDeleteCell") {
     const request = data.request as DeleteCell;
     deleteNode(request.cell);
@@ -91,6 +98,18 @@ const moveNode = (id: string, x: number | null, y: number | null) => {
     });
   });
 };
+
+const updateSource = (id: string, source: string) => {
+  state.setSource(id, source);
+  // state.setNodes((nodes) => {
+  //   return nodes.map((n) => {
+  //     if (n.id === id) {
+  //       return { ...n, data: { ...n.data, source: source} }
+  //     }
+  //     return n;
+  //   })
+  // })
+}
 
 const deleteNode = (id: string) => {
   state.setNodes((nodes) => {

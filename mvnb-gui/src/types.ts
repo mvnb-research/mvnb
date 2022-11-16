@@ -31,6 +31,12 @@ export type MoveCell = {
   y: number | null;
 };
 
+export type UpdateCell = {
+  user: string;
+  cell: string;
+  source: string;
+};
+
 export type DeleteCell = {
   user: string;
   cell: string;

@@ -37,7 +37,6 @@ export const CellView = (props: NodeProps<Cell>) => {
             extensions={[python()]}
             onChange={(value, viewUpdate) => {
               client.updateCell(props.id, value);
-              setSource(value);
             }}
           />
         </CardContent>
