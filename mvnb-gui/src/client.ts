@@ -42,12 +42,12 @@ export const runCell = (id: string) => {
 const onMessage = (type: string, data: any) => {
   if (type === "Notebook") {
     for (const cell of (data as Notebook).cells) {
-      createNode(cell.id, cell.parent, cell.x, cell.y);
+      createNode(cell.id, cell.parent, cell.x, cell.y, cell.source);
       createEdge(cell.parent, cell.id);
     }
   } else if (type === "DidCreateCell") {
     const request = data.request as CreateCell;
-    createNode(request.cell, request.parent, request.x, request.y);
+    createNode(request.cell, request.parent, request.x, request.y, null);
     createEdge(request.parent, request.cell);
   } else if (type === "DidMoveCell") {
     const request = data.request as MoveCell;
@@ -78,11 +78,19 @@ const createNode = (
   id: string,
   parent: string | null,
   x: number | null,
-  y: number | null
+  y: number | null,
+  source: string | null
 ) => {
   state.setNodes((nodes) => {
     const type = "cell";
-    const data = { id, parent, source: "", outputs: [], x: x!, y: y! };
+    const data = {
+      id,
+      parent,
+      source: source ?? "",
+      outputs: [],
+      x: x!,
+      y: y!,
+    };
     const position = { x: x!, y: y! };
     return [...nodes, { id, data, type, position }];
   });
@@ -101,15 +109,7 @@ const moveNode = (id: string, x: number | null, y: number | null) => {
 
 const updateSource = (id: string, source: string) => {
   state.setSource(id, source);
-  // state.setNodes((nodes) => {
-  //   return nodes.map((n) => {
-  //     if (n.id === id) {
-  //       return { ...n, data: { ...n.data, source: source} }
-  //     }
-  //     return n;
-  //   })
-  // })
-}
+};
 
 const deleteNode = (id: string) => {
   state.setNodes((nodes) => {
