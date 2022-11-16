@@ -163,6 +163,7 @@ class Server(object):
         await self._broadcast(response)
 
     async def _callback(self, msg):
+        self._cells[msg.cell].done = True
         res = DidRunCell(request=msg)
         await self._responses.put(res)
 

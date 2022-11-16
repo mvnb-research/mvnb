@@ -18,18 +18,27 @@ def test_cell_default_fields():
     cell = Cell()
     _test(
         cell,
-        dict(_type="Cell", id=None, source=None, parent=None, outputs=[], x=0, y=0),
+        dict(
+            _type="Cell",
+            id=None,
+            source=None,
+            parent=None,
+            outputs=[],
+            x=0,
+            y=0,
+            done=False,
+        ),
     )
 
 
 def test_output_default_fields():
     output = Output()
-    _test(output, dict(_type="Output", type=None, data=None))
+    _test(output, dict(_type="Output", id=None, type=None, data=None))
 
 
 def test_stdout_default_fields():
     stdout = Stdout()
-    _test(stdout, dict(_type="Stdout", cell=None, text=None))
+    _test(stdout, dict(_type="Stdout", id=stdout.id, cell=None, text=None))
 
 
 def test_create_cell_default_fields():

@@ -33,6 +33,10 @@ class Cell(Payload):
     def y(self, raw):
         return raw or 0
 
+    @field
+    def done(self, raw):
+        return bool(raw)
+
 
 class Output(Payload):
     @field
