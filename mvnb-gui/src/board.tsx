@@ -18,6 +18,9 @@ export const Board = () => {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onInit={() => websocket.connect()}
+      zoomOnScroll={false}
+      zoomOnPinch={false}
+      zoomOnDoubleClick={false}
     >
       <Panel />
     </ReactFlow>
