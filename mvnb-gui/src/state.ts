@@ -83,7 +83,12 @@ export const removeSetOutputs = (id: string) => {
 };
 
 export const isEditable = (id: string) => {
-  return isRunnable(id);
+  for (const n of nodes) {
+    if (n.id === id && 0 < n.data.outputs.length) {
+      return false;
+    }
+  }
+  return true;
 };
 
 export const isRunnable = (id: string): boolean => {
