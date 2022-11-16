@@ -22,10 +22,9 @@ export const Board = () => {
       zoomOnScroll={false}
       zoomOnPinch={false}
       zoomOnDoubleClick={false}
-      onNodeDragStop={(event, node) => {
-        client.moveCell(node.id, node.position.x, node.position.y);
-        console.log(event);
-      }}
+      onNodeDragStop={(e, node) =>
+        client.moveCell(node.id, node.position.x, node.position.y)
+      }
     >
       <Panel />
     </ReactFlow>
