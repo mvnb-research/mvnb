@@ -102,6 +102,11 @@ const createNode = (
     const position = { x: x!, y: y! };
     return [...nodes, { id, data, type, position }];
   });
+  if (parent) {
+    state.setEditable(parent);
+    state.setRunnable(parent);
+    state.setDeletable(parent);
+  }
 };
 
 const moveNode = (id: string, x: number | null, y: number | null) => {

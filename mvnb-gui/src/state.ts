@@ -19,8 +19,16 @@ export const setSource = (id: string, source: string) => {
   _setSource.get(id)!.call(this, source);
 };
 
-export const setIsLeaf = (id: string, isLeaf: boolean) => {
-  _setIsLeaf.get(id)!.call(this, isLeaf);
+export const setEditable = (id: string) => {
+  _setEditable.get(id)?.call(this, isEditable(id));
+};
+
+export const setRunnable = (id: string) => {
+  _setRunnable.get(id)?.call(this, isRunnable(id));
+};
+
+export const setDeletable = (id: string) => {
+  _setDeletable.get(id)?.call(this, isDeletable(id));
 };
 
 export const initSetNodes = (f: Dispatch<SetStateAction<Node<Cell>[]>>) => {
@@ -45,11 +53,25 @@ export const addSetOutputs = (
   _setOutputs.set(id, f);
 };
 
-export const addSetIsLeaf = (
+export const addSetEditable = (
   id: string,
   f: Dispatch<SetStateAction<boolean>>
 ) => {
-  _setIsLeaf.set(id, f);
+  _setEditable.set(id, f);
+};
+
+export const addSetRunnable = (
+  id: string,
+  f: Dispatch<SetStateAction<boolean>>
+) => {
+  _setRunnable.set(id, f);
+};
+
+export const addSetDeletable = (
+  id: string,
+  f: Dispatch<SetStateAction<boolean>>
+) => {
+  _setDeletable.set(id, f);
 };
 
 export const removeSetSource = (id: string) => {
@@ -97,6 +119,10 @@ var _setSource = new Map<string, Dispatch<SetStateAction<string>>>();
 
 var _setOutputs = new Map<string, Dispatch<SetStateAction<Output[]>>>();
 
-var _setIsLeaf = new Map<string, Dispatch<SetStateAction<boolean>>>();
+var _setEditable = new Map<string, Dispatch<SetStateAction<boolean>>>();
+
+var _setRunnable = new Map<string, Dispatch<SetStateAction<boolean>>>();
+
+var _setDeletable = new Map<string, Dispatch<SetStateAction<boolean>>>();
 
 var nodes: Node<Cell>[] = [];
