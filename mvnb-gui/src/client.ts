@@ -1,5 +1,5 @@
 import * as state from "./state";
-import { CreateCell, DeleteCell, Notebook, Stdout } from "./types";
+import { CreateCell, DeleteCell, Notebook, Output, Stdout } from "./types";
 import * as websocket from "./websocket";
 import { v4 as uuid } from "uuid";
 
@@ -7,8 +7,12 @@ export const saveNotebook = () => {
   websocket.send({ _type: "SaveNotebook" });
 };
 
-export const createCell = (parent: string | null) => {
-  websocket.send({ _type: "CreateCell", cell: uuid(), parent: parent });
+export const createCell = (
+  parent: string | null,
+  x: number | null,
+  y: number | null
+) => {
+  websocket.send({ _type: "CreateCell", cell: uuid(), parent: parent, x, y });
 };
 
 export const deleteCell = (id: string) => {
@@ -26,12 +30,12 @@ export const runCell = (id: string) => {
 const onMessage = (type: string, data: any) => {
   if (type === "Notebook") {
     for (const cell of (data as Notebook).cells) {
-      createNode(cell.id, cell.parent);
+      createNode(cell.id, cell.parent, cell.x, cell.y);
       createEdge(cell.parent, cell.id);
     }
   } else if (type === "DidCreateCell") {
     const request = data.request as CreateCell;
-    createNode(request.cell, request.parent);
+    createNode(request.cell, request.parent, request.x, request.y);
     createEdge(request.parent, request.cell);
   } else if (type === "DidDeleteCell") {
     const request = data.request as DeleteCell;
@@ -47,11 +51,16 @@ const onMessage = (type: string, data: any) => {
   }
 };
 
-const createNode = (id: string, parent: string | null) => {
+const createNode = (
+  id: string,
+  parent: string | null,
+  x: number | null,
+  y: number | null
+) => {
   state.setNodes((nodes) => {
     const type = "cell";
-    const data = { id, parent, source: "", outputs: [] };
-    const position = { x: 0, y: 0 };
+    const data = { id, parent, source: "", outputs: [], x: x!, y: y! };
+    const position = { x: x!, y: y! };
     return [...nodes, { id, data, type, position }];
   });
 };

@@ -12,7 +12,10 @@ export const Panel = () => (
       <IconButton color="primary" onClick={() => client.saveNotebook()}>
         <SaveIcon />
       </IconButton>
-      <IconButton color="primary" onClick={() => client.createCell(null)}>
+      <IconButton
+        color="primary"
+        onClick={() => client.createCell(null, 10, 10)}
+      >
         <AddIcon />
       </IconButton>
     </ButtonGroup>

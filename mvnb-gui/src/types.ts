@@ -7,6 +7,8 @@ export type Cell = {
   source: string | null;
   parent: string | null;
   outputs: Output[];
+  x: number | null;
+  y: number | null;
 };
 
 export type Output = {
@@ -17,6 +19,8 @@ export type Output = {
 export type CreateCell = {
   cell: string;
   parent: string | null;
+  x: number | null;
+  y: number | null;
 };
 
 export type DeleteCell = {
