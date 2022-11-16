@@ -53,7 +53,7 @@ export const CellView = (props: NodeProps<Cell>) => {
             }}
           >
             {outputs.map((o) => {
-              return <Box>{o.data}</Box>;
+              return <Box key={o.id}>{o.data}</Box>;
             })}
           </CardContent>
         )}

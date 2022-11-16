@@ -69,7 +69,7 @@ const onMessage = (type: string, data: any) => {
     const stdout = data as Stdout;
     state.setOutputs(stdout.cell, (os) => [
       ...os,
-      { type: "text", data: stdout.text },
+      { id: stdout.id, type: "text", data: stdout.text },
     ]);
   }
 };

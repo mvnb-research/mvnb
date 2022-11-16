@@ -12,6 +12,7 @@ export type Cell = {
 };
 
 export type Output = {
+  id: string;
   type: string;
   data: string;
 };
@@ -43,6 +44,7 @@ export type DeleteCell = {
 };
 
 export type Stdout = {
+  id: string;
   user: string;
   cell: string;
   text: string;
