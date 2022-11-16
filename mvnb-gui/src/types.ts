@@ -9,6 +9,7 @@ export type Cell = {
   outputs: Output[];
   x: number | null;
   y: number | null;
+  done: boolean;
 };
 
 export type Output = {
