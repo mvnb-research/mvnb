@@ -16,7 +16,9 @@ export const CellView = (props: NodeProps<Cell>) => {
   state.addSetOutputs(props.id, setOutputs);
   return (
     <Box width={`${cellWidth}vw`}>
-      {props.data.parent != null && <Handle type="target" position={Position.Top} />}
+      {props.data.parent != null && (
+        <Handle type="target" position={Position.Top} />
+      )}
       <Card variant="outlined">
         <CardActions disableSpacing={true}>
           <IconButton color="primary" onClick={() => client.runCell(props.id)}>
