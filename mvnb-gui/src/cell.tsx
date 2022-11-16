@@ -18,7 +18,7 @@ export const CellView = (props: NodeProps<Cell>) => {
   state.addSetSource(props.id, setSource);
   state.addSetOutputs(props.id, setOutputs);
   state.addSetEditable(props.id, setEditable);
-  state.addSetRunnable(props.id, setEditable);
+  state.addSetRunnable(props.id, setRunnable);
   state.addSetDeletable(props.id, setDeletable);
   return (
     <Box width={`${cellWidth}vw`}>
