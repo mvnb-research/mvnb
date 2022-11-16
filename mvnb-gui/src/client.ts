@@ -126,6 +126,13 @@ const updateSource = (id: string, source: string) => {
 
 const deleteNode = (id: string) => {
   state.setNodes((nodes) => {
+    for (const n of nodes) {
+      if (n.id === id && n.data.parent) {
+        state.setEditable(n.data.parent);
+        state.setRunnable(n.data.parent);
+        state.setDeletable(n.data.parent);
+      }
+    }
     return nodes.filter((n) => n.id != id);
   });
 };

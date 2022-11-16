@@ -16,19 +16,19 @@ export const setOutputs = (id: string, f: (edges: Output[]) => Output[]) => {
 };
 
 export const setSource = (id: string, source: string) => {
-  _setSource.get(id)!.call(this, source);
+  _setSource.get(id)!.call(this, (_) => source);
 };
 
 export const setEditable = (id: string) => {
-  _setEditable.get(id)?.call(this, isEditable(id));
+  _setEditable.get(id)?.call(this, (_) => isEditable(id));
 };
 
 export const setRunnable = (id: string) => {
-  _setRunnable.get(id)?.call(this, isRunnable(id));
+  _setRunnable.get(id)?.call(this, (_) => isRunnable(id));
 };
 
 export const setDeletable = (id: string) => {
-  _setDeletable.get(id)?.call(this, isDeletable(id));
+  _setDeletable.get(id)?.call(this, (_) => isDeletable(id));
 };
 
 export const initSetNodes = (f: Dispatch<SetStateAction<Node<Cell>[]>>) => {
