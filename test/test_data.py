@@ -16,7 +16,10 @@ def test_notebook_default_fields():
 
 def test_cell_default_fields():
     cell = Cell()
-    _test(cell, dict(_type="Cell", id=None, source=None, parent=None, outputs=[]))
+    _test(
+        cell,
+        dict(_type="Cell", id=None, source=None, parent=None, outputs=[], x=0, y=0),
+    )
 
 
 def test_output_default_fields():
@@ -33,7 +36,7 @@ def test_create_cell_default_fields():
     req = CreateCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="CreateCell", id=req.id, cell=None, parent=None))
+    _test(req, dict(_type="CreateCell", id=req.id, cell=None, parent=None, x=0, y=0))
 
 
 def test_update_cell_default_fields():

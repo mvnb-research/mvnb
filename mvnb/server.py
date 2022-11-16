@@ -13,10 +13,18 @@ from mvnb.notebook import Cell, Notebook, Output
 from mvnb.output import Stdout
 from mvnb.payload import Payload
 from mvnb.queue import Queue
-from mvnb.request import CreateCell, DeleteCell, RunCell, SaveNotebook, UpdateCell
+from mvnb.request import (
+    CreateCell,
+    DeleteCell,
+    MoveCell,
+    RunCell,
+    SaveNotebook,
+    UpdateCell,
+)
 from mvnb.response import (
     DidCreateCell,
     DidDeleteCell,
+    DidMoveCell,
     DidRunCell,
     DidSaveNotebook,
     DidUpdateCell,
@@ -93,6 +101,14 @@ class Server(object):
         self._notebook.cells.append(cell)
         self._cells[cell.id] = cell
         response = DidCreateCell(request=req)
+        await self._responses.put(response)
+
+    @_handle_request.register(MoveCell)
+    async def _(self, req):
+        cell = self._cells[req.cell]
+        cell.x = req.x
+        cell.y = req.y
+        response = DidMoveCell(request=req)
         await self._responses.put(response)
 
     @_handle_request.register(DeleteCell)
