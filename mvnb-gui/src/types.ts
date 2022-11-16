@@ -17,17 +17,27 @@ export type Output = {
 };
 
 export type CreateCell = {
+  user: string;
   cell: string;
   parent: string | null;
   x: number | null;
   y: number | null;
 };
 
+export type MoveCell = {
+  user: string;
+  cell: string;
+  x: number | null;
+  y: number | null;
+};
+
 export type DeleteCell = {
+  user: string;
   cell: string;
 };
 
 export type Stdout = {
+  user: string;
   cell: string;
   text: string;
 };

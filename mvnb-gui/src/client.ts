@@ -1,5 +1,12 @@
 import * as state from "./state";
-import { CreateCell, DeleteCell, Notebook, Output, Stdout } from "./types";
+import {
+  CreateCell,
+  DeleteCell,
+  MoveCell,
+  Notebook,
+  Output,
+  Stdout,
+} from "./types";
 import * as websocket from "./websocket";
 import { v4 as uuid } from "uuid";
 
@@ -13,6 +20,10 @@ export const createCell = (
   y: number | null
 ) => {
   websocket.send({ _type: "CreateCell", cell: uuid(), parent: parent, x, y });
+};
+
+export const moveCell = (id: string, x: number | null, y: number | null) => {
+  websocket.send({ _type: "MoveCell", cell: id, x: x, y: y });
 };
 
 export const deleteCell = (id: string) => {
@@ -37,6 +48,11 @@ const onMessage = (type: string, data: any) => {
     const request = data.request as CreateCell;
     createNode(request.cell, request.parent, request.x, request.y);
     createEdge(request.parent, request.cell);
+  } else if (type === "DidMoveCell") {
+    const request = data.request as MoveCell;
+    if (websocket.userId !== request.user) {
+      moveNode(request.cell, request.x, request.y);
+    }
   } else if (type === "DidDeleteCell") {
     const request = data.request as DeleteCell;
     deleteNode(request.cell);
@@ -62,6 +78,17 @@ const createNode = (
     const data = { id, parent, source: "", outputs: [], x: x!, y: y! };
     const position = { x: x!, y: y! };
     return [...nodes, { id, data, type, position }];
+  });
+};
+
+const moveNode = (id: string, x: number | null, y: number | null) => {
+  state.setNodes((nodes) => {
+    return nodes.map((n) => {
+      if (n.id === id) {
+        return { ...n, position: { x: x!, y: y! } };
+      }
+      return n;
+    });
   });
 };
 

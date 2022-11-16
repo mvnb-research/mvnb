@@ -1,4 +1,5 @@
 import { CellView } from "./cell";
+import * as client from "./client";
 import { Panel } from "./controls";
 import * as state from "./state";
 import { Cell } from "./types";
@@ -21,6 +22,10 @@ export const Board = () => {
       zoomOnScroll={false}
       zoomOnPinch={false}
       zoomOnDoubleClick={false}
+      onNodeDragStop={(event, node) => {
+        client.moveCell(node.id, node.position.x, node.position.y);
+        console.log(event);
+      }}
     >
       <Panel />
     </ReactFlow>
