@@ -10,6 +10,10 @@ class Request(Payload, abst=True):
         return raw or uuid4().hex
 
     @field
+    def user(self, raw):
+        return raw
+
+    @field
     def cell(self, raw):
         return raw
 

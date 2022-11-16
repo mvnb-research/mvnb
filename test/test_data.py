@@ -36,21 +36,26 @@ def test_create_cell_default_fields():
     req = CreateCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="CreateCell", id=req.id, cell=None, parent=None, x=0, y=0))
+    _test(
+        req,
+        dict(
+            _type="CreateCell", id=req.id, user=None, cell=None, parent=None, x=0, y=0
+        ),
+    )
 
 
 def test_update_cell_default_fields():
     req = UpdateCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="UpdateCell", id=req.id, cell=None, source=None))
+    _test(req, dict(_type="UpdateCell", id=req.id, user=None, cell=None, source=None))
 
 
 def test_run_cell_default_fields():
     req = RunCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="RunCell", id=req.id, cell=None))
+    _test(req, dict(_type="RunCell", id=req.id, user=None, cell=None))
 
 
 def test_did_create_cell_default_fields():
