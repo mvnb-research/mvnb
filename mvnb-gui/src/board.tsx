@@ -22,7 +22,7 @@ export const Board = () => {
       zoomOnScroll={false}
       zoomOnPinch={false}
       zoomOnDoubleClick={false}
-      onNodeDragStop={(e, node) =>
+      onNodeDrag={(e, node) =>
         client.moveCell(node.id, node.position.x, node.position.y)
       }
     >
