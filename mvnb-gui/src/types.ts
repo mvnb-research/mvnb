@@ -10,6 +10,9 @@ export type Cell = {
   x: number | null;
   y: number | null;
   done: boolean;
+  editable: boolean;
+  runnable: boolean;
+  deletable: boolean;
 };
 
 export type Output = {
