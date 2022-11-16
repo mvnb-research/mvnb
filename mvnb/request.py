@@ -19,6 +19,14 @@ class CreateCell(Request):
     def parent(self, raw):
         return raw
 
+    @field
+    def x(self, raw):
+        return raw or 0
+
+    @field
+    def y(self, raw):
+        return raw or 0
+
 
 class DeleteCell(Request):
     pass

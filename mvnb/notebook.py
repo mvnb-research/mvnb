@@ -25,6 +25,14 @@ class Cell(Payload):
     def outputs(self, raw):
         return raw or []
 
+    @field
+    def x(self, raw):
+        return raw or 0
+
+    @field
+    def y(self, raw):
+        return raw or 0
+
 
 class Output(Payload):
     @field

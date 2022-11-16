@@ -89,7 +89,7 @@ class Server(object):
 
     @_handle_request.register(CreateCell)
     async def _(self, req):
-        cell = Cell(id=req.cell, parent=req.parent)
+        cell = Cell(id=req.cell, parent=req.parent, x=req.x, y=req.y)
         self._notebook.cells.append(cell)
         self._cells[cell.id] = cell
         response = DidCreateCell(request=req)
