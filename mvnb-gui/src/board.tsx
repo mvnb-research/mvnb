@@ -4,7 +4,11 @@ import { Panel } from "./controls";
 import * as state from "./state";
 import { Cell } from "./types";
 import * as websocket from "./websocket";
-import ReactFlow, { OnConnectStartParams, useEdgesState, useNodesState } from "react-flow-renderer";
+import ReactFlow, {
+  OnConnectStartParams,
+  useEdgesState,
+  useNodesState,
+} from "react-flow-renderer";
 
 export const Board = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Cell>([]);
@@ -42,7 +46,6 @@ const createConnector = () => {
   const onConnectStart = (
     event: React.MouseEvent,
     params: OnConnectStartParams
-
   ) => {
     startId = params.nodeId;
   };

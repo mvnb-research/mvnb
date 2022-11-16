@@ -41,7 +41,17 @@ export const CellView = (props: NodeProps<Cell>) => {
           />
         </CardContent>
         {outputs.length > 0 && (
-          <CardContent>
+          <CardContent
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: 14,
+              pl: "20px",
+              pr: "20px",
+              pt: 0,
+              pb: "16px",
+              "&:last-child": { pb: "16px" },
+            }}
+          >
             {outputs.map((o) => {
               return <Box>{o.data}</Box>;
             })}
