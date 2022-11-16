@@ -32,6 +32,12 @@ export const CellView = (props: NodeProps<Cell>) => {
         </CardActions>
         <CardContent sx={{ pt: 0 }}>
           <ReactCodeMirror
+            style={{ border: "1px solid rgba(0, 0, 0, 0.12)" }}
+            basicSetup={{
+              lineNumbers: false,
+              highlightActiveLineGutter: false,
+              highlightActiveLine: false,
+            }}
             value={props.data.source ?? ""}
             extensions={[python()]}
             editable={props.data.editable}
