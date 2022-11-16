@@ -42,7 +42,14 @@ export const runCell = (id: string) => {
 const onMessage = (type: string, data: any) => {
   if (type === "Notebook") {
     for (const cell of (data as Notebook).cells) {
-      createNode(cell.id, cell.parent, cell.x, cell.y, cell.source, cell.outputs);
+      createNode(
+        cell.id,
+        cell.parent,
+        cell.x,
+        cell.y,
+        cell.source,
+        cell.outputs
+      );
       createEdge(cell.parent, cell.id);
     }
   } else if (type === "DidCreateCell") {

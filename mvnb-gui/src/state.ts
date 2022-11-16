@@ -3,7 +3,10 @@ import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "react-flow-renderer";
 
 export const setNodes = (f: (nodes: Node<Cell>[]) => Node<Cell>[]) =>
-  _setNodes!(f);
+  _setNodes!((ns) => {
+    nodes = f(ns);
+    return nodes;
+  });
 
 export const setEdges = (f: (edges: Edge<void>[]) => Edge<void>[]) =>
   _setEdges!(f);
@@ -14,6 +17,10 @@ export const setOutputs = (id: string, f: (edges: Output[]) => Output[]) => {
 
 export const setSource = (id: string, source: string) => {
   _setSource.get(id)!.call(this, source);
+};
+
+export const setIsLeaf = (id: string, isLeaf: boolean) => {
+  _setIsLeaf.get(id)!.call(this, isLeaf);
 };
 
 export const initSetNodes = (f: Dispatch<SetStateAction<Node<Cell>[]>>) => {
@@ -38,12 +45,48 @@ export const addSetOutputs = (
   _setOutputs.set(id, f);
 };
 
+export const addSetIsLeaf = (
+  id: string,
+  f: Dispatch<SetStateAction<boolean>>
+) => {
+  _setIsLeaf.set(id, f);
+};
+
 export const removeSetSource = (id: string) => {
   _setSource.delete(id);
 };
 
 export const removeSetOutputs = (id: string) => {
   _setOutputs.delete(id);
+};
+
+export const isEditable = (id: string) => {
+  return isRunnable(id);
+};
+
+export const isRunnable = (id: string): boolean => {
+  for (const n of nodes) {
+    if (n.id === id && 0 < n.data.outputs.length) {
+      return false;
+    }
+  }
+  const parent = nodes
+    .filter((n) => n.id === id)
+    .map((n) => n.data.parent)
+    .at(0);
+  if (parent) {
+    return !isRunnable(parent);
+  }
+  return true;
+};
+
+export const isDeletable = (id: string) => {
+  for (const n of nodes) {
+    if (n.data.parent === id) {
+      return false;
+    }
+  }
+  return true;
 };
 
 var _setNodes = null as Dispatch<SetStateAction<Node<Cell>[]>> | null;
@@ -53,3 +96,7 @@ var _setEdges = null as Dispatch<SetStateAction<Edge<void>[]>> | null;
 var _setSource = new Map<string, Dispatch<SetStateAction<string>>>();
 
 var _setOutputs = new Map<string, Dispatch<SetStateAction<Output[]>>>();
+
+var _setIsLeaf = new Map<string, Dispatch<SetStateAction<boolean>>>();
+
+var nodes: Node<Cell>[] = [];
