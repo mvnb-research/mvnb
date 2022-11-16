@@ -7,8 +7,8 @@ export type Cell = {
   source: string | null;
   parent: string | null;
   outputs: Output[];
-  x: number | null;
-  y: number | null;
+  x: number;
+  y: number;
   done: boolean;
   editable: boolean;
   runnable: boolean;
@@ -25,15 +25,20 @@ export type CreateCell = {
   user: string;
   cell: string;
   parent: string | null;
-  x: number | null;
-  y: number | null;
+  x: number;
+  y: number;
 };
 
 export type MoveCell = {
   user: string;
   cell: string;
-  x: number | null;
-  y: number | null;
+  x: number;
+  y: number;
+};
+
+export type RunCell = {
+  user: string;
+  cell: string;
 };
 
 export type UpdateCell = {
