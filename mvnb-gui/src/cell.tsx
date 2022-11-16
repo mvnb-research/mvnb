@@ -36,7 +36,8 @@ export const CellView = (props: NodeProps<Cell>) => {
             basicSetup={{
               lineNumbers: false,
               highlightActiveLineGutter: false,
-              highlightActiveLine: false
+              highlightActiveLine: false,
+              tabSize: 4
             }}
             value={props.data.source ?? ""}
             extensions={[python()]}
