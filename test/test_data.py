@@ -16,38 +16,55 @@ def test_notebook_default_fields():
 
 def test_cell_default_fields():
     cell = Cell()
-    _test(cell, dict(_type="Cell", id=None, source=None, parent=None, outputs=[]))
+    _test(
+        cell,
+        dict(
+            _type="Cell",
+            id=None,
+            source=None,
+            parent=None,
+            outputs=[],
+            x=0,
+            y=0,
+            done=False,
+        ),
+    )
 
 
 def test_output_default_fields():
     output = Output()
-    _test(output, dict(_type="Output", type=None, data=None))
+    _test(output, dict(_type="Output", id=None, type=None, data=None))
 
 
 def test_stdout_default_fields():
     stdout = Stdout()
-    _test(stdout, dict(_type="Stdout", cell=None, text=None))
+    _test(stdout, dict(_type="Stdout", id=stdout.id, cell=None, text=None))
 
 
 def test_create_cell_default_fields():
     req = CreateCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="CreateCell", id=req.id, cell=None, parent=None))
+    _test(
+        req,
+        dict(
+            _type="CreateCell", id=req.id, user=None, cell=None, parent=None, x=0, y=0
+        ),
+    )
 
 
 def test_update_cell_default_fields():
     req = UpdateCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="UpdateCell", id=req.id, cell=None, source=None))
+    _test(req, dict(_type="UpdateCell", id=req.id, user=None, cell=None, source=None))
 
 
 def test_run_cell_default_fields():
     req = RunCell()
     assert isinstance(req.id, str)
     assert len(req.id) == 32
-    _test(req, dict(_type="RunCell", id=req.id, cell=None))
+    _test(req, dict(_type="RunCell", id=req.id, user=None, cell=None))
 
 
 def test_did_create_cell_default_fields():

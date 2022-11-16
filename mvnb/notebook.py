@@ -25,8 +25,24 @@ class Cell(Payload):
     def outputs(self, raw):
         return raw or []
 
+    @field
+    def x(self, raw):
+        return raw or 0
+
+    @field
+    def y(self, raw):
+        return raw or 0
+
+    @field
+    def done(self, raw):
+        return bool(raw)
+
 
 class Output(Payload):
+    @field
+    def id(self, raw):
+        return raw
+
     @field
     def type(self, raw):
         return raw
