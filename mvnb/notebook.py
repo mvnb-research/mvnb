@@ -36,6 +36,10 @@ class Cell(Payload):
 
 class Output(Payload):
     @field
+    def id(self, raw):
+        return raw
+
+    @field
     def type(self, raw):
         return raw
 

@@ -42,12 +42,12 @@ export const runCell = (id: string) => {
 const onMessage = (type: string, data: any) => {
   if (type === "Notebook") {
     for (const cell of (data as Notebook).cells) {
-      createNode(cell.id, cell.parent, cell.x, cell.y, cell.source);
+      createNode(cell.id, cell.parent, cell.x, cell.y, cell.source, cell.outputs);
       createEdge(cell.parent, cell.id);
     }
   } else if (type === "DidCreateCell") {
     const request = data.request as CreateCell;
-    createNode(request.cell, request.parent, request.x, request.y, null);
+    createNode(request.cell, request.parent, request.x, request.y, null, []);
     createEdge(request.parent, request.cell);
   } else if (type === "DidMoveCell") {
     const request = data.request as MoveCell;
@@ -79,7 +79,8 @@ const createNode = (
   parent: string | null,
   x: number | null,
   y: number | null,
-  source: string | null
+  source: string | null,
+  outputs: Output[]
 ) => {
   state.setNodes((nodes) => {
     const type = "cell";
@@ -87,7 +88,7 @@ const createNode = (
       id,
       parent,
       source: source ?? "",
-      outputs: [],
+      outputs: outputs,
       x: x!,
       y: y!,
     };

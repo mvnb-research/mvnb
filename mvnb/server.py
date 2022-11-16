@@ -158,7 +158,7 @@ class Server(object):
     async def _(self, response, sender):
         cell = self._cells[self._workers.find_key(sender)]
         response.cell = cell.id
-        output = Output(type="text", data=response.text)
+        output = Output(id=response.id, type="text", data=response.text)
         cell.outputs.append(output)
         await self._broadcast(response)
 
