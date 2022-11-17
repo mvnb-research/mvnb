@@ -33,6 +33,7 @@ export const CellView = (props: NodeProps<Cell>) => {
         <CardContent sx={{ pt: 0 }}>
           <ReactCodeMirror
             style={{ border: "1px solid rgba(0, 0, 0, 0.12)" }}
+            className="nodrag nowheel"
             basicSetup={{
               lineNumbers: false,
               highlightActiveLineGutter: false,
