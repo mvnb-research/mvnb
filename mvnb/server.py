@@ -8,9 +8,14 @@ from uuid import uuid4
 from tornado.web import Application
 
 from mvnb.bidict import BiDict
-from mvnb.handler import CallbackHandler, FileHandler, MessageHandler
+from mvnb.handler import (
+    CallbackHandler,
+    FileHandler,
+    MessageHandler,
+    SideChannelHandler,
+)
 from mvnb.notebook import Cell, Notebook, Output
-from mvnb.output import Stdout
+from mvnb.output import RawData, Stdout
 from mvnb.payload import Payload
 from mvnb.queue import Queue
 from mvnb.request import (
@@ -68,6 +73,7 @@ class Server(object):
             [
                 self._message_handler,
                 self._callback_handler,
+                self._sidechannel_handler,
                 self._file_handler,
             ]
         ).listen(address=self._config.addr, port=self._config.port)
@@ -86,6 +92,11 @@ class Server(object):
     def _callback_handler(self):
         args = dict(func=self._callback)
         return CallbackHandler.PATH, CallbackHandler, args
+
+    @property
+    def _sidechannel_handler(self):
+        args = dict(func=self._sidechannel)
+        return SideChannelHandler.PATH, SideChannelHandler, args
 
     @property
     def _file_handler(self):
@@ -130,14 +141,14 @@ class Server(object):
         cell = self._cells[req.cell]
         if cell.parent:
             parent = self._workers[cell.parent]
-            worker = Worker(self._config, self._responses.put)
+            worker = Worker(req.cell, self._config, self._responses.put)
             addr, event = _socket_address(), Event()
             create_task(worker.start_fork(addr, event))
             await event.wait()
             await parent.fork(addr)
             self._workers[cell.id] = worker
         else:
-            worker = Worker(self._config, self._responses.put)
+            worker = Worker(req.cell, self._config, self._responses.put)
             await worker.start_root()
             self._workers[cell.id] = worker
         await self._workers[cell.id].put(req, cell.source)
@@ -166,6 +177,12 @@ class Server(object):
         self._cells[msg.cell].done = True
         res = DidRunCell(request=msg)
         await self._responses.put(res)
+
+    async def _sidechannel(self, cell_id, type, data):
+        res = RawData(cell=cell_id, type=type, data=data)
+        output = Output(id=res.id, type=type, data=data)
+        self._cells[cell_id].outputs.append(output)
+        await self._broadcast(res)
 
     async def _broadcast(self, msg):
         json = msg.to_json()

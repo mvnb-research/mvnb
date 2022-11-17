@@ -31,6 +31,19 @@ if __name__ == "__main__":
         args = dict(data=data, headers=head, method="POST")
         urlopen(Request(endpoint, **args))
 
+    def __mvnb_sidechannel(endpoint, cell_id):
+        from json import dumps
+        from urllib.request import Request, urlopen
+
+        def _(type, data):
+            dct = dict(cell_id=cell_id, type=type, data=data)
+            data = dumps(dct).encode("utf8")
+            head = {"content-type": "application/json"}
+            args = dict(data=data, headers=head, method="POST")
+            urlopen(Request(endpoint, **args))
+
+        return _
+
     def __mvnb_init():
         import readline
         import sys

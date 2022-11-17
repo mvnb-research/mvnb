@@ -11,14 +11,15 @@ from subprocess import PIPE, Popen
 from termios import TCSANOW
 from tty import setraw
 
-from mvnb.handler import CallbackHandler
+from mvnb.handler import CallbackHandler, SideChannelHandler
 from mvnb.output import Stdout
 from mvnb.queue import Queue
 from mvnb.request import RunCell
 
 
 class Worker(object):
-    def __init__(self, config, response):
+    def __init__(self, cell_id, config, response):
+        self._cell_id = cell_id
         self._config = config
         self._response = response
         self._fd = None
@@ -70,6 +71,7 @@ class Worker(object):
 
     @_handle_request.register(RunCell)
     async def _(self, msg, code):
+        self._write(self._sidechannel_code())
         if self._config.before_run:
             self._write(self._config.before_run)
         self._write(code)
@@ -81,6 +83,19 @@ class Worker(object):
         code = self._config.fork
         code = code.replace(self._config.fork_addr, addr)
         return code
+
+    def _sidechannel_code(self):
+        url = self._sidechannel_url()
+        code = self._config.sidechannel
+        code = code.replace(self._config.sidechannel_url, url)
+        code = code.replace(self._config.sidechannel_cell_id, self._cell_id)
+        return code
+
+    def _sidechannel_url(self):
+        addr = self._config.addr
+        port = self._config.port
+        path = SideChannelHandler.PATH
+        return f"http://{addr}:{port}{path}"
 
     def _callback_code(self, msg):
         url = self._callback_url()
