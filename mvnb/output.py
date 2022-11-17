@@ -18,3 +18,13 @@ class Stdout(Output):
     @field
     def text(self, raw):
         return raw
+
+
+class RawData(Output):
+    @field
+    def type(self, raw):
+        return raw
+
+    @field
+    def data(self, raw):
+        return raw

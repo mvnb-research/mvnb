@@ -5,6 +5,7 @@ import {
   DeleteCell,
   MoveCell,
   Notebook,
+  RawData,
   RunCell,
   Stdout,
   UpdateCell,
@@ -33,6 +34,7 @@ export const runCell = (id: string) =>
 const onMessage = (type: string, data: any) => {
   if (type === "Notebook") return didLoadNotebook(data);
   if (type === "Stdout") return didReceiveStdout(data);
+  if (type === "RawData") return didReceiveRawData(data);
   if (type === "DidSaveNotebook") return didSaveNotebook(data.request);
   if (type === "DidCreateCell") return didCreateCell(data.request);
   if (type === "DidUpdateCell") return didUpdateCell(data.request);
@@ -185,6 +187,27 @@ const didReceiveStdout = (data: Stdout) => {
       return n;
     })
   );
+};
+
+const didReceiveRawData = (data: RawData) => {
+  state.setNodes((ns) =>
+    ns.map((n) => {
+      if (n.id === data.cell) {
+        return {
+          ...n,
+          data: {
+            ...n.data,
+            outputs: [
+              ...n.data.outputs,
+              { id: data.id, type: "image", data: data.data },
+            ],
+          },
+        };
+      }
+      return n;
+    })
+  );
+  console.log(data);
 };
 
 const updateButtons = () => {

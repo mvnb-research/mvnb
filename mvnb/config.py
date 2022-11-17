@@ -61,6 +61,20 @@ class Config(Data):
     def fork_addr(self, raw):
         return raw or "__address__"
 
+    @option(help="sidechannel code", metavar="<code>")
+    def sidechannel(self, raw):
+        url, id = self.sidechannel_url, self.sidechannel_cell_id
+        default = f"__sidechannel = __mvnb_sidechannel('{url}', '{id}')"
+        return self._text_or_file(raw) or default
+
+    @option(help="sidechannel url placeholder", metavar="<text>")
+    def sidechannel_url(self, raw):
+        return raw or "__url__"
+
+    @option(help="sidechannel cell id placeholder", metavar="<text>")
+    def sidechannel_cell_id(self, raw):
+        return raw or "__id__"
+
     @option(help="callback code", metavar="<code>")
     def callback(self, raw):
         default = f"__mvnb_callback('{self.callback_url}', '{self.callback_payload}')"

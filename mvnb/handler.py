@@ -1,3 +1,4 @@
+from json import loads
 from pathlib import Path
 
 from tornado.web import RequestHandler, StaticFileHandler
@@ -40,6 +41,21 @@ class CallbackHandler(RequestHandler):
     async def post(self):
         msg = Payload.from_json(self.request.body)
         await self._func(msg)
+
+
+class SideChannelHandler(RequestHandler):
+
+    PATH = r"/sidechannel"
+
+    def initialize(self, func):
+        self._func = func
+
+    async def post(self):
+        obj = loads(self.request.body)
+        cell = obj["cell_id"]
+        type = obj["type"]
+        data = obj["data"]
+        await self._func(cell, type, data)
 
 
 class FileHandler(StaticFileHandler):

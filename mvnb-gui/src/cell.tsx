@@ -37,11 +37,11 @@ export const CellView = (props: NodeProps<Cell>) => {
               lineNumbers: false,
               highlightActiveLineGutter: false,
               highlightActiveLine: false,
-              tabSize: 4
+              tabSize: 4,
             }}
             value={props.data.source ?? ""}
             extensions={[python()]}
-            editable={props.data.editable}
+            readOnly={!props.data.editable}
             onChange={(value, viewUpdate) => {
               client.updateCell(props.id, value);
             }}
@@ -60,7 +60,18 @@ export const CellView = (props: NodeProps<Cell>) => {
             }}
           >
             {props.data.outputs.map((o) => {
-              return <Box key={o.id}>{o.data}</Box>;
+              if (o.type === "text") {
+                return <Box key={o.id}>{o.data}</Box>;
+              } else {
+                return (
+                  <Box key={o.id}>
+                    <img
+                      width="100%"
+                      src={`data:image/jpeg;base64,${o.data}`}
+                    />
+                  </Box>
+                );
+              }
             })}
           </CardContent>
         )}
@@ -70,4 +81,4 @@ export const CellView = (props: NodeProps<Cell>) => {
   );
 };
 
-const cellWidth = 48;
+const cellWidth = 33;
