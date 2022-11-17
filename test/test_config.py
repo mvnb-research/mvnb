@@ -43,21 +43,24 @@ def test_help(capsys_test):
 usage: mvnb [options]
 
 options:
-  --help                     show help
-  --version                  show version
-  --path <path>              notebook path
-  --addr <addr>              server address
-  --port <port>              server port
-  --repl-command <cmd>       repl command
-  --repl-arguments <args>    repl arguments
-  --preproc <cmd>            preprocessor command
-  --before-run <code>        before-run code
-  --after-run <code>         after-run code
-  --fork <code>              fork code
-  --fork-addr <text>         fork address placeholder
-  --callback <code>          callback code
-  --callback-url <text>      callback url placeholder
-  --callback-payload <text>  callback payload placeholder
-  --fromfile-prefix <text>   fromfile prefix
+  --help                        show help
+  --version                     show version
+  --path <path>                 notebook path
+  --addr <addr>                 server address
+  --port <port>                 server port
+  --repl-command <cmd>          repl command
+  --repl-arguments <args>       repl arguments
+  --preproc <cmd>               preprocessor command
+  --before-run <code>           before-run code
+  --after-run <code>            after-run code
+  --fork <code>                 fork code
+  --fork-addr <text>            fork address placeholder
+  --sidechannel <code>          sidechannel code
+  --sidechannel-url <text>      sidechannel url placeholder
+  --sidechannel-cell-id <text>  sidechannel cell id placeholder
+  --callback <code>             callback code
+  --callback-url <text>         callback url placeholder
+  --callback-payload <text>     callback payload placeholder
+  --fromfile-prefix <text>      fromfile prefix
 """
     )
