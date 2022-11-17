@@ -41,7 +41,7 @@ export const CellView = (props: NodeProps<Cell>) => {
             }}
             value={props.data.source ?? ""}
             extensions={[python()]}
-            editable={props.data.editable}
+            readOnly={!props.data.editable}
             onChange={(value, viewUpdate) => {
               client.updateCell(props.id, value);
             }}
