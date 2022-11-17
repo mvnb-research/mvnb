@@ -1,19 +1,27 @@
-import { CellView } from "./cell";
+import { CellView, cellWidth } from "./cell";
 import * as client from "./client";
 import { Panel } from "./controls";
 import * as state from "./state";
 import { Cell } from "./types";
 import * as websocket from "./websocket";
+import { useEffect } from "react";
 import ReactFlow, {
   OnConnectStartParams,
   useEdgesState,
   useNodesState,
+  useViewport,
 } from "react-flow-renderer";
 
 export const Board = () => {
+  const { x, y, zoom } = useViewport();
+  useEffect(() => {
+    offsetX = x;
+    offsetY = y;
+  }, [x, y, zoom]);
+
   const [nodes, setNodes, onNodesChange] = useNodesState<Cell>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<void>([]);
-  const [onConnectStart, onConnectStop] = createConnector();
+  const [onConnectStart, onConnectEnd] = createConnector();
   state.initSetNodes(setNodes);
   state.initSetEdges(setEdges);
   return (
@@ -24,7 +32,7 @@ export const Board = () => {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnectStart={onConnectStart}
-      onConnectStop={onConnectStop}
+      onConnectEnd={onConnectEnd}
       onInit={() => websocket.connect()}
       zoomOnScroll={false}
       zoomOnPinch={false}
@@ -50,14 +58,18 @@ const createConnector = () => {
     startId = params.nodeId;
   };
 
-  const onConnectStop = (event: MouseEvent) => {
-    const x = event.x - (window.innerWidth * 0.45) / 2;
-    const y = event.y;
+  const onConnectEnd = (event: MouseEvent) => {
+    const x = event.x - (window.innerWidth * cellWidth) / 100 / 2 - offsetX;
+    const y = event.y - offsetY;
     client.createCell(startId!, x, y);
   };
 
-  return [onConnectStart, onConnectStop] as [
+  return [onConnectStart, onConnectEnd] as [
     (event: React.MouseEvent, params: OnConnectStartParams) => void,
     (event: MouseEvent) => void
   ];
 };
+
+var offsetX = 0;
+
+var offsetY = 0;
