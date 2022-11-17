@@ -58,3 +58,11 @@ export type Stdout = {
   cell: string;
   text: string;
 };
+
+export type RawData = {
+  id: string;
+  user: string;
+  cell: string;
+  type: string;
+  data: string;
+};
