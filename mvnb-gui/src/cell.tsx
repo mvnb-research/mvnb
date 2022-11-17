@@ -92,4 +92,4 @@ export const CellView = (props: NodeProps<Cell>) => {
   );
 };
 
-const cellWidth = 33;
+const cellWidth = 45;
