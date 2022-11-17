@@ -69,7 +69,7 @@ clean: $(shell grep -o '^clean-[^:]*' Makefile)
 
 .PHONY: clean-venv
 clean-venv:
-	rm -rf .venv .yarn
+	rm -rf .venv .yarn mvnb-gui/yarn
 
 .PHONY: clean-pyc
 clean-pyc:
