@@ -4,13 +4,21 @@ import { Panel } from "./controls";
 import * as state from "./state";
 import { Cell } from "./types";
 import * as websocket from "./websocket";
+import { useEffect } from "react";
 import ReactFlow, {
   OnConnectStartParams,
   useEdgesState,
   useNodesState,
+  useViewport,
 } from "react-flow-renderer";
 
 export const Board = () => {
+  const { x, y, zoom } = useViewport();
+  useEffect(() => {
+    offsetX = x;
+    offsetY = y;
+  }, [x, y, zoom]);
+
   const [nodes, setNodes, onNodesChange] = useNodesState<Cell>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<void>([]);
   const [onConnectStart, onConnectEnd] = createConnector();
@@ -51,8 +59,8 @@ const createConnector = () => {
   };
 
   const onConnectEnd = (event: MouseEvent) => {
-    const x = event.x - (window.innerWidth * cellWidth) / 100 / 2;
-    const y = event.y;
+    const x = event.x - (window.innerWidth * cellWidth) / 100 / 2 - offsetX;
+    const y = event.y - offsetY;
     client.createCell(startId!, x, y);
   };
 
@@ -61,3 +69,7 @@ const createConnector = () => {
     (event: MouseEvent) => void
   ];
 };
+
+var offsetX = 0;
+
+var offsetY = 0;
