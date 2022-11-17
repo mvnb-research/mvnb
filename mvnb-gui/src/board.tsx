@@ -1,4 +1,4 @@
-import { CellView } from "./cell";
+import { CellView, cellWidth } from "./cell";
 import * as client from "./client";
 import { Panel } from "./controls";
 import * as state from "./state";
@@ -51,7 +51,7 @@ const createConnector = () => {
   };
 
   const onConnectStop = (event: MouseEvent) => {
-    const x = event.x - (window.innerWidth * 0.45) / 2;
+    const x = event.x - (window.innerWidth * cellWidth) / 100 / 2;
     const y = event.y;
     client.createCell(startId!, x, y);
   };
