@@ -28,8 +28,24 @@ export const deleteCell = (id: string) =>
 export const moveCell = (id: string, x: number, y: number) =>
   websocket.send({ _type: "MoveCell", cell: id, x: x, y: y });
 
-export const runCell = (id: string) =>
+export const runCell = (id: string) => {
   websocket.send({ _type: "RunCell", cell: id });
+  state.setNodes((ns) =>
+    ns.map((n) => {
+      if (n.id === id) {
+        return {
+          ...n,
+          data: {
+            ...n.data,
+            loading: true,
+          },
+        };
+      }
+      return n;
+    })
+  );
+  updateButtons();
+};
 
 const onMessage = (type: string, data: any) => {
   if (type === "Notebook") return didLoadNotebook(data);
@@ -63,6 +79,7 @@ const didLoadNotebook = (data: Notebook) => {
           editable: false,
           runnable: false,
           deletable: false,
+          loading: false,
         },
       };
     })
@@ -100,6 +117,7 @@ const didCreateCell = (request: CreateCell) => {
           editable: false,
           runnable: false,
           deletable: false,
+          loading: false,
         },
       },
     ];
@@ -160,6 +178,7 @@ const didRunCell = (request: RunCell) => {
           data: {
             ...n.data,
             done: true,
+            loading: false,
           },
         };
       }
@@ -229,7 +248,7 @@ const updateButtons = () => {
 const isRunnable = (id: string, nodes: Node<Cell>[]) => {
   for (const n of nodes) {
     if (n.id === id) {
-      if (n.data.done) {
+      if (n.data.done || n.data.loading) {
         return false;
       }
     }
@@ -259,6 +278,13 @@ const isDeletable = (id: string, nodes: Node<Cell>[]) => {
   for (const n of nodes) {
     if (n.data.parent === id) {
       return false;
+    }
+  }
+  for (const n of nodes) {
+    if (n.id === id) {
+      if (n.data.loading) {
+        return false;
+      }
     }
   }
   return true;

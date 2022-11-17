@@ -2,7 +2,13 @@ import * as client from "./client";
 import { Cell } from "./types";
 import { python } from "@codemirror/lang-python";
 import { Delete, PlayCircle } from "@mui/icons-material";
-import { Card, CardActions, CardContent, IconButton } from "@mui/material";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { Handle, NodeProps, Position } from "react-flow-renderer";
@@ -20,7 +26,11 @@ export const CellView = (props: NodeProps<Cell>) => {
             onClick={() => client.runCell(props.id)}
             disabled={!props.data.runnable}
           >
-            <PlayCircle />
+            {props.data.loading ? (
+              <CircularProgress size={24} />
+            ) : (
+              <PlayCircle />
+            )}
           </IconButton>
           <IconButton
             color="primary"
@@ -33,6 +43,7 @@ export const CellView = (props: NodeProps<Cell>) => {
         <CardContent sx={{ pt: 0 }}>
           <ReactCodeMirror
             style={{ border: "1px solid rgba(0, 0, 0, 0.12)" }}
+            className="nodrag nowheel"
             basicSetup={{
               lineNumbers: false,
               highlightActiveLineGutter: false,

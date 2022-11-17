@@ -13,6 +13,7 @@ export type Cell = {
   editable: boolean;
   runnable: boolean;
   deletable: boolean;
+  loading: boolean;
 };
 
 export type Output = {
