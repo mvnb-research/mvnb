@@ -62,8 +62,14 @@ class Worker(object):
         get_event_loop().add_reader(self._fd, self._read_callback)
 
     def _read_callback(self):
-        text = read(self._fd, 1024).decode()
-        create_task(self._reply(Stdout(text=text)))
+        try:
+            text = read(self._fd, 1024).decode()
+            create_task(self._reply(Stdout(text=text)))
+        except OSError as e:
+            if e.errno == 5:
+                get_event_loop().remove_reader(self._fd)
+            else:
+                raise
 
     @singledispatchmethod
     async def _handle_request(self, _):
