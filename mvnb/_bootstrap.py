@@ -31,6 +31,17 @@ if __name__ == "__main__":
         args = dict(data=data, headers=head, method="POST")
         urlopen(Request(endpoint, **args))
 
+    def __mvnb_after_run():
+        from os import getpid
+        from subprocess import check_output
+
+        args = "lsof", "-w", "-Ffn", "-p", str(getpid())
+        lsof = check_output(args, text=True).splitlines()[1:]
+        for f, n in zip(lsof[::2], lsof[1::2]):
+            f, n = f[1:], n[1:]
+            if f.isdigit() and 2 < int(f) and n.startswith("/"):
+                raise Exception(f"Unclosed file: {n}")
+
     def __mvnb_sidechannel(endpoint, cell_id):
         from json import dumps
         from urllib.request import Request, urlopen
