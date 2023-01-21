@@ -9,6 +9,7 @@ from signal import SIGKILL
 from socket import AF_UNIX, SOCK_STREAM, socket
 from subprocess import PIPE, Popen
 from termios import TCSANOW
+from traceback import format_exception
 from tty import setraw
 
 from mvnb.handler import CallbackHandler, SideChannelHandler
@@ -68,6 +69,7 @@ class Worker(object):
         except OSError as e:
             if e.errno == 5:
                 get_event_loop().remove_reader(self._fd)
+                self._reply(Stdout(text=format_exception(e)))
             else:
                 raise
 
