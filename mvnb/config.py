@@ -50,7 +50,8 @@ class Config(Data):
 
     @option(help="after-run code", metavar="<code>")
     def after_run(self, raw):
-        return self._text_or_file(raw)
+        default = "__mvnb_after_run()"
+        return self._text_or_file(raw) or default
 
     @option(help="fork code", metavar="<code>")
     def fork(self, raw):
