@@ -16,7 +16,7 @@ def test_default_values():
     assert config.repl_arguments == ["-i", _bootstrap.__file__]
     assert config.preproc == [executable, _preprocessor.__file__]
     assert config.before_run is None
-    assert config.after_run == "__mvnb_after_run()"
+    assert config.after_run is None
     assert config.fork == "__mvnb_fork('__address__')"
     assert config.callback == "__mvnb_callback('__url__', '__payload__')"
     assert config.fromfile_prefix == "@"
