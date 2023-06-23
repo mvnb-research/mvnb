@@ -8,7 +8,6 @@ from mvnb.payload import Payload
 
 
 class MessageHandler(WebSocketHandler):
-
     PATH = r"/message"
 
     def check_origin(self, origin):
@@ -32,7 +31,6 @@ class MessageHandler(WebSocketHandler):
 
 
 class CallbackHandler(RequestHandler):
-
     PATH = r"/callback"
 
     def initialize(self, func):
@@ -44,7 +42,6 @@ class CallbackHandler(RequestHandler):
 
 
 class SideChannelHandler(RequestHandler):
-
     PATH = r"/sidechannel"
 
     def initialize(self, func):
@@ -59,7 +56,6 @@ class SideChannelHandler(RequestHandler):
 
 
 class FileHandler(StaticFileHandler):
-
     PATH = r"/(.*)"
 
     def initialize(self):
