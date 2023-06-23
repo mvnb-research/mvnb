@@ -2,18 +2,15 @@
 
 A Notebook Environment for Safe and Efficient Exploration
 
-## Build and run Multiverse Notebook
+## Run Multiverse Notebook
 
 ### With Docker
 
 Requirement: Docker
 
 ```sh
-# Build a docker image
-docker build -t mvnb .
-
 # Run Multiverse Notebook in a container
-docker run --rm -p 8000:8000 -it mvnb
+docker run --rm -p 8000:8000 -it ghcr.io/mvnb-research/mvnb:mvnb
 
 # Open http://localhost:8000 in your browser
 ```
