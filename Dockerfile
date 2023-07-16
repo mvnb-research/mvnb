@@ -1,5 +1,5 @@
 # Builder
-FROM python:3.10-alpine as builder
+FROM python:3.11-alpine as builder
 
 RUN apk add make npm
 
@@ -8,7 +8,7 @@ COPY . /src
 RUN cd /src && make build
 
 # Main
-FROM python:3.10-alpine
+FROM python:3.11-alpine
 
 COPY --from=builder /src/dist/ /dist
 
