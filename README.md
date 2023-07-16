@@ -17,7 +17,7 @@ docker run --rm -p 8000:8000 -it ghcr.io/mvnb-research/mvnb:mvnb
 
 ### Without Docker
 
-Requirements: Python3.10, NPM, Make
+Requirements: Linux, Python3, NPM, Make
 
 ```sh
 # Build Multiverse Notebook
